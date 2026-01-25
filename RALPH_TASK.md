@@ -40,7 +40,7 @@ Build a simple, mobile-first web application that shows which bins need to be pu
 14. [x] Clear visual indication of which bins are active for each week
 15. [x] App works offline (minimal external dependencies)
 16. [x] Code is clean, well-organized, and maintainable
-17. [ ] Make it cuter
+17. [x] Make it cuter
 
 ## Example Output
 
