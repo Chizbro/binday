@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗑️ Bin Day Reminder</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #app {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: #666;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn.active {
+            background: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Current Week View */
+        .current-week {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .week-title {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .bin-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 3px solid;
+            transition: transform 0.2s ease;
+        }
+
+        .bin-card:hover {
+            transform: scale(1.02);
+        }
+
+        .bin-card.green {
+            border-color: #a8d5a8;
+            background: #f0f9f0;
+        }
+
+        .bin-card.red {
+            border-color: #f5b5b5;
+            background: #fff5f5;
+        }
+
+        .bin-card.yellow {
+            border-color: #f5e5a5;
+            background: #fffef5;
+        }
+
+        .bin-card.inactive {
+            opacity: 0.5;
+            border-style: dashed;
+        }
+
+        .bin-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .bin-emoji {
+            font-size: 2em;
+        }
+
+        .bin-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .bin-status {
+            font-size: 1.1em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .bin-status.active {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        /* Calendar View */
+        .calendar-view {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .calendar-title {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .week-item {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .week-item.current {
+            background: #e8f5e9;
+            border-left-color: #2e7d32;
+            border-left-width: 6px;
+        }
+
+        .week-date {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .week-date.current::after {
+            content: " ← This week";
+            color: #2e7d32;
+            font-size: 0.85em;
+        }
+
+        .week-bins {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .week-bin {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .week-bin.green {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .week-bin.red {
+            background: #ffcdd2;
+            color: #b71c1c;
+        }
+
+        .week-bin.yellow {
+            background: #fff9c4;
+            color: #f57f17;
+        }
+
+        .smiley {
+            font-size: 1.5em;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 400px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.6em;
+            }
+
+            .bin-card {
+                padding: 15px;
+            }
+
+            .bin-emoji {
+                font-size: 1.5em;
+            }
+
+            .bin-name {
+                font-size: 1.1em;
+            }
+
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (min-width: 320px) {
+            /* Ensure minimum 320px viewport works */
+            .view-toggle {
+                flex-direction: row;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>🗑️ Bin Day Reminder</h1>
+        <p class="subtitle">Collection day: Tuesday mornings</p>
+
+        <div class="view-toggle">
+            <button class="btn" :class="{ active: currentView === 'week' }" @click="currentView = 'week'">
+                This Week
+            </button>
+            <button class="btn" :class="{ active: currentView === 'calendar' }" @click="currentView = 'calendar'">
+                Calendar
+            </button>
+        </div>
+
+        <!-- Current Week View -->
+        <div v-if="currentView === 'week'" class="current-week">
+            <div class="week-title">This Week's Bins 😊</div>
+            
+            <div class="bin-card green">
+                <div class="bin-header">
+                    <span class="bin-emoji">🟢</span>
+                    <span class="bin-name">Green Bin</span>
+                </div>
+                <div class="bin-status active">✓ Put out this week!</div>
+            </div>
+
+            <div class="bin-card red" :class="{ inactive: !currentWeekBins.red }">
+                <div class="bin-header">
+                    <span class="bin-emoji">🔴</span>
+                    <span class="bin-name">Red Bin</span>
+                </div>
+                <div class="bin-status" :class="{ active: currentWeekBins.red }">
+                    {{ currentWeekBins.red ? '✓ Put out this week!' : '✗ Not this week' }}
+                </div>
+            </div>
+
+            <div class="bin-card yellow" :class="{ inactive: !currentWeekBins.yellow }">
+                <div class="bin-header">
+                    <span class="bin-emoji">🟡</span>
+                    <span class="bin-name">Yellow Bin</span>
+                </div>
+                <div class="bin-status" :class="{ active: currentWeekBins.yellow }">
+                    {{ currentWeekBins.yellow ? '✓ Put out this week!' : '✗ Not this week' }}
+                </div>
+            </div>
+
+            <div class="smiley">😊</div>
+        </div>
+
+        <!-- Calendar View -->
+        <div v-if="currentView === 'calendar'" class="calendar-view">
+            <div class="calendar-title">Bin Collection Calendar 📅</div>
+            
+            <div v-for="week in calendarWeeks" :key="week.weekStart" 
+                 class="week-item" :class="{ current: week.isCurrent }">
+                <div class="week-date" :class="{ current: week.isCurrent }">
+                    Week of {{ formatDate(week.weekStart) }}
+                </div>
+                <div class="week-bins">
+                    <div class="week-bin green">
+                        <span>🟢</span>
+                        <span>Green</span>
+                    </div>
+                    <div v-if="week.bins.red" class="week-bin red">
+                        <span>🔴</span>
+                        <span>Red</span>
+                    </div>
+                    <div v-if="week.bins.yellow" class="week-bin yellow">
+                        <span>🟡</span>
+                        <span>Yellow</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="smiley">🗓️</div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    currentView: 'week',
+                    referenceDate: new Date(2026, 0, 6), // Monday, January 5, 2026 (month is 0-indexed)
+                    today: new Date()
+                };
+            },
+            computed: {
+                currentWeekStart() {
+                    // Get Monday of current week
+                    const date = new Date(this.today);
+                    const day = date.getDay();
+                    const diff = day === 0 ? -6 : 1 - day; // If Sunday, go back 6 days; otherwise, go to Monday
+                    date.setDate(date.getDate() + diff);
+                    date.setHours(0, 0, 0, 0);
+                    return date;
+                },
+                currentWeekBins() {
+                    return this.getBinsForWeek(this.currentWeekStart);
+                },
+                calendarWeeks() {
+                    const weeks = [];
+                    const currentWeekTime = this.currentWeekStart.getTime();
+                    
+                    // Generate 8 weeks starting from current week
+                    for (let i = 0; i < 8; i++) {
+                        const weekStart = new Date(this.currentWeekStart);
+                        weekStart.setDate(weekStart.getDate() + (i * 7));
+                        
+                        weeks.push({
+                            weekStart: weekStart,
+                            bins: this.getBinsForWeek(weekStart),
+                            isCurrent: weekStart.getTime() === currentWeekTime
+                        });
+                    }
+                    
+                    return weeks;
+                }
+            },
+            methods: {
+                getBinsForWeek(weekStart) {
+                    // Calculate week number difference from reference date
+                    // Reference: Monday Jan 5, 2026 was a RED bin week
+                    const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+                    const weeksDiff = Math.floor((weekStart.getTime() - this.referenceDate.getTime()) / msPerWeek);
+                    
+                    // Red bin on even weeks (0, 2, 4...), Yellow on odd weeks (1, 3, 5...)
+                    // Since reference week is RED (week 0), even weeks = red, odd = yellow
+                    const isRedWeek = weeksDiff % 2 === 0;
+                    
+                    return {
+                        green: true, // Always collected
+                        red: isRedWeek,
+                        yellow: !isRedWeek
+                    };
+                },
+                formatDate(date) {
+                    const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                    return date.toLocaleDateString('en-US', options);
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
