@@ -766,6 +766,23 @@ check_prerequisites() {
     return 1
   fi
   
+  # Check for cursor-agent authentication
+  echo "🔑 Checking cursor-agent authentication..."
+  local auth_check
+  # Quick auth check - errors return immediately, success we kill after head -5
+  auth_check=$(cursor-agent -p --force --model auto "test" 2>&1 | head -5) || true
+  if [[ "$auth_check" == *"Authentication required"* ]] || [[ "$auth_check" == *"authentication"* ]] || [[ "$auth_check" == *"CURSOR_API_KEY"* ]] || [[ "$auth_check" == *"login"* ]]; then
+    echo "❌ cursor-agent not authenticated"
+    echo ""
+    echo "Please authenticate first:"
+    echo "  cursor-agent login"
+    echo ""
+    echo "Or set your API key:"
+    echo "  export CURSOR_API_KEY=\"your-api-key\""
+    return 1
+  fi
+  echo "✅ cursor-agent authenticated"
+  
   # Check for git repo
   if ! git -C "$workspace" rev-parse --git-dir > /dev/null 2>&1; then
     echo "❌ Not a git repository"
