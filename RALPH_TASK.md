@@ -45,7 +45,7 @@ Build a simple, mobile-first web application that shows which bins need to be pu
 17. [x] Make it cuter
 18. [x] Remove all 'breathing' animations from the UI
 19. [x] Enhance cuteness through more gratuitous use of pastel colors and emoji throughout the interface
-20. [ ] Remove the up/down swaying breathing motion too please
+20. [x] Remove the up/down swaying breathing motion too please
 
 ## Example Output
 
