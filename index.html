@@ -17,10 +17,6 @@
             50% { transform: translateY(-10px); }
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
 
         @keyframes wiggle {
             0%, 100% { transform: rotate(0deg); }
@@ -40,7 +36,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #ffeef8 0%, #e8f5ff 50%, #fff4e8 100%);
+            background: linear-gradient(135deg, #ffeef8 0%, #e8f5ff 25%, #fff4e8 50%, #f0fff4 75%, #fff0f5 100%);
             min-height: 100vh;
             padding: 20px;
             position: relative;
@@ -51,7 +47,7 @@
             content: '✨';
             position: fixed;
             font-size: 2em;
-            opacity: 0.1;
+            opacity: 0.15;
             animation: sparkle 3s ease-in-out infinite;
             top: 10%;
             left: 10%;
@@ -61,7 +57,7 @@
             content: '⭐';
             position: fixed;
             font-size: 1.5em;
-            opacity: 0.1;
+            opacity: 0.15;
             animation: sparkle 2.5s ease-in-out infinite;
             top: 80%;
             right: 15%;
@@ -102,7 +98,7 @@
             font-size: 1em;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 100%);
+            background: linear-gradient(135deg, #fff5f7 0%, #f0f9ff 50%, #fef3f2 100%);
             color: #666;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             font-weight: 600;
@@ -118,19 +114,19 @@
         }
 
         .btn.active {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
+            background: linear-gradient(135deg, #a5f3fc 0%, #7dd3fc 50%, #38bdf8 100%);
+            color: #0c4a6e;
             font-weight: bold;
-            box-shadow: 0 4px 16px rgba(76, 175, 80, 0.4);
+            box-shadow: 0 4px 16px rgba(56, 189, 248, 0.4);
         }
 
         /* Current Week View */
         .current-week {
-            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            background: linear-gradient(135deg, #fef7ff 0%, #f0f9ff 50%, #fff7ed 100%);
             border-radius: 24px;
             padding: 30px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            border: 2px solid rgba(255,255,255,0.8);
+            border: 3px solid rgba(255,182,193,0.3);
         }
 
         .week-title {
@@ -182,9 +178,9 @@
         }
 
         .bin-card.green {
-            border-color: #81c784;
-            background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
-            box-shadow: 0 4px 16px rgba(129, 199, 132, 0.2);
+            border-color: #86efac;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+            box-shadow: 0 4px 16px rgba(134, 239, 172, 0.3);
         }
 
         .bin-card.green:hover {
@@ -192,9 +188,9 @@
         }
 
         .bin-card.red {
-            border-color: #ef5350;
-            background: linear-gradient(135deg, #fff5f5 0%, #ffebee 100%);
-            box-shadow: 0 4px 16px rgba(239, 83, 80, 0.2);
+            border-color: #fca5a5;
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
+            box-shadow: 0 4px 16px rgba(252, 165, 165, 0.3);
         }
 
         .bin-card.red:hover {
@@ -202,9 +198,9 @@
         }
 
         .bin-card.yellow {
-            border-color: #ffb74d;
-            background: linear-gradient(135deg, #fffef5 0%, #fff9e6 100%);
-            box-shadow: 0 4px 16px rgba(255, 183, 77, 0.2);
+            border-color: #fde047;
+            background: linear-gradient(135deg, #fefce8 0%, #fef9c3 50%, #fef08a 100%);
+            box-shadow: 0 4px 16px rgba(253, 224, 71, 0.3);
         }
 
         .bin-card.yellow:hover {
@@ -230,7 +226,6 @@
 
         .bin-emoji {
             font-size: 2.5em;
-            animation: pulse 2s ease-in-out infinite;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
@@ -254,16 +249,15 @@
         .bin-status.active {
             color: #2e7d32;
             font-weight: bold;
-            animation: pulse 2s ease-in-out infinite;
         }
 
         /* Calendar View */
         .calendar-view {
-            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            background: linear-gradient(135deg, #fef7ff 0%, #f0f9ff 50%, #fff7ed 100%);
             border-radius: 24px;
             padding: 30px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            border: 2px solid rgba(255,255,255,0.8);
+            border: 3px solid rgba(255,182,193,0.3);
         }
 
         .calendar-title {
@@ -275,11 +269,11 @@
         }
 
         .week-item {
-            background: linear-gradient(135deg, #f9f9f9 0%, #f5f5f5 100%);
+            background: linear-gradient(135deg, #fef3f2 0%, #fff1f2 50%, #ffe4e6 100%);
             border-radius: 18px;
             padding: 20px;
             margin-bottom: 15px;
-            border-left: 6px solid #4CAF50;
+            border-left: 6px solid #fda4af;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
@@ -290,11 +284,10 @@
         }
 
         .week-item.current {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            border-left-color: #2e7d32;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+            border-left-color: #86efac;
             border-left-width: 8px;
-            box-shadow: 0 4px 16px rgba(46, 125, 50, 0.2);
-            animation: pulse 3s ease-in-out infinite;
+            box-shadow: 0 4px 16px rgba(134, 239, 172, 0.3);
         }
 
         .week-date {
@@ -305,8 +298,8 @@
         }
 
         .week-date.current::after {
-            content: " ⭐ Next";
-            color: #2e7d32;
+            content: " ⭐✨ Next ✨";
+            color: #065f46;
             font-size: 0.9em;
             animation: sparkle 2s ease-in-out infinite;
         }
@@ -335,18 +328,18 @@
         }
 
         .week-bin.green {
-            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
-            color: #1b5e20;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 50%, #6ee7b7 100%);
+            color: #065f46;
         }
 
         .week-bin.red {
-            background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%);
-            color: #b71c1c;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 50%, #fca5a5 100%);
+            color: #991b1b;
         }
 
         .week-bin.yellow {
-            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
-            color: #f57f17;
+            background: linear-gradient(135deg, #fef9c3 0%, #fef08a 50%, #fde047 100%);
+            color: #854d0e;
         }
 
         .smiley {
@@ -405,79 +398,79 @@
 <body>
     <div id="app">
         <h1>🗑️✨ Bin Day Reminder ✨🗑️</h1>
-        <p class="subtitle">🌅 Collection day: Tuesday mornings 🌅</p>
+        <p class="subtitle">🌅 Collection day: Tuesday mornings 🌅 💫</p>
 
         <div class="view-toggle">
             <button class="btn" :class="{ active: currentView === 'week' }" @click="currentView = 'week'">
-                📅 This Week
+                📅✨ This Week ✨
             </button>
             <button class="btn" :class="{ active: currentView === 'calendar' }" @click="currentView = 'calendar'">
-                📆 Calendar
+                📆🌟 Calendar 🌟
             </button>
         </div>
 
         <!-- Current Week View -->
         <div v-if="currentView === 'week'" class="current-week">
-            <div class="week-title">{{ weekTitle }} 😊✨</div>
-            <div class="bin-date">⏰ Next collection: {{ formatDate(nextBinDay) }} ⏰</div>
+            <div class="week-title">{{ weekTitle }} 😊✨💖</div>
+            <div class="bin-date">⏰ Next collection: {{ formatDate(nextBinDay) }} ⏰💫</div>
             
             <div class="bin-card green">
                 <div class="bin-header">
                     <span class="bin-emoji">🟢</span>
-                    <span class="bin-name">Green Bin 🌿</span>
+                    <span class="bin-name">Green Bin 🌿💚</span>
                 </div>
-                <div class="bin-status active">✅ Put out this week! 🎉</div>
+                <div class="bin-status active">✅ Put out this week! 🎉✨</div>
             </div>
 
             <div class="bin-card red" :class="{ inactive: !currentWeekBins.red }">
                 <div class="bin-header">
                     <span class="bin-emoji">🔴</span>
-                    <span class="bin-name">Red Bin ❤️</span>
+                    <span class="bin-name">Red Bin ❤️💖</span>
                 </div>
                 <div class="bin-status" :class="{ active: currentWeekBins.red }">
-                    {{ currentWeekBins.red ? '✅ Put out this week! 🎉' : '⏸️ Not this week 😴' }}
+                    {{ currentWeekBins.red ? '✅ Put out this week! 🎉✨' : '⏸️ Not this week 😴💤' }}
                 </div>
             </div>
 
             <div class="bin-card yellow" :class="{ inactive: !currentWeekBins.yellow }">
                 <div class="bin-header">
                     <span class="bin-emoji">🟡</span>
-                    <span class="bin-name">Yellow Bin 💛</span>
+                    <span class="bin-name">Yellow Bin 💛⭐</span>
                 </div>
                 <div class="bin-status" :class="{ active: currentWeekBins.yellow }">
-                    {{ currentWeekBins.yellow ? '✅ Put out this week! 🎉' : '⏸️ Not this week 😴' }}
+                    {{ currentWeekBins.yellow ? '✅ Put out this week! 🎉✨' : '⏸️ Not this week 😴💤' }}
                 </div>
             </div>
 
-            <div class="smiley">😊 Have a great week! 🌟</div>
+            <div class="smiley">😊 Have a great week! 🌟💫✨</div>
         </div>
 
         <!-- Calendar View -->
         <div v-if="currentView === 'calendar'" class="calendar-view">
-            <div class="calendar-title">🗓️ Bin Collection Calendar 📅✨</div>
+            <div class="calendar-title">🗓️ Bin Collection Calendar 📅✨💖</div>
             
             <div v-for="week in calendarWeeks" :key="week.weekStart" 
                  class="week-item" :class="{ current: week.isCurrent }">
                 <div class="week-date" :class="{ current: week.isCurrent }">
-                    📆 Week of {{ formatDate(week.weekStart) }}
+                    📆 Week of {{ formatDate(week.weekStart) }} 📅
                 </div>
                 <div class="week-bins">
                     <div class="week-bin green">
                         <span>🟢</span>
-                        <span>Green 🌿</span>
+                        <span>Green 🌿💚</span>
                     </div>
                     <div v-if="week.bins.red" class="week-bin red">
                         <span>🔴</span>
-                        <span>Red ❤️</span>
+                        <span>Red ❤️💖</span>
                     </div>
                     <div v-if="week.bins.yellow" class="week-bin yellow">
                         <span>🟡</span>
-                        <span>Yellow 💛</span>
+                        <span>Yellow 💛⭐</span>
                     </div>
                 </div>
             </div>
 
-            <div class="smiley">🗓️ Plan ahead! ✨</div>
+            <div class="smiley">🗓️ Plan ahead! ✨💫🌟</div>
         </div>
     </div>
 
