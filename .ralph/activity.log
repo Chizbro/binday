@@ -2,3 +2,8 @@
 
 > Real-time tool call logging from stream-parser.
 
+
+═══════════════════════════════════════════════════════════════
+Ralph Session Started: Sun Jan 25 17:57:41 AWST 2026
+═══════════════════════════════════════════════════════════════
+[17:58:53] 🟢 TOKENS: 750 / 80000 (0%) [read:0KB write:0KB assist:0KB shell:0KB]
