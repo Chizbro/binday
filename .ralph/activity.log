@@ -225,3 +225,9 @@ Ralph Session Started: Sun Jan 25 18:14:10 AWST 2026
 Ralph Session Started: Sun Jan 25 18:14:15 AWST 2026
 ═══════════════════════════════════════════════════════════════
 [18:14:15] DEBUG: stream-parser started, waiting for input...
+[18:14:16] 🟢 TOKENS: 750 / 80000 (0%) [read:0KB write:0KB assist:0KB shell:0KB]
+
+═══════════════════════════════════════════════════════════════
+Ralph Session Started: Sun Jan 25 18:14:20 AWST 2026
+═══════════════════════════════════════════════════════════════
+[18:14:20] DEBUG: stream-parser started, waiting for input...
