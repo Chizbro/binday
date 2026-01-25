@@ -165,14 +165,19 @@ run_watchdog() {
       echo "🚨 WATCHDOG: Blocking process detected: $blocking" >&2
 
       # Also write to errors.log so next iteration sees it.
-      {
-        echo ""
-        echo "## BLOCKED: Interactive Command"
-        echo "- **Command**: $blocking"
-        echo "- **Action**: Process killed by watchdog"
-        echo "- **Fix**: Use non-interactive alternatives (npm init -y, git commit -m \"msg\")"
-        echo ""
-      } >> "$errors_log" 2>/dev/null || true
+      # Use here-document for atomic write to avoid broken pipe errors
+      # that can occur with brace group redirects when file descriptors
+      # are shared or closed unexpectedly
+      if [[ -w "$errors_log" ]] || [[ ! -f "$errors_log" ]]; then
+        cat >> "$errors_log" << EOF 2>/dev/null || true
+
+## BLOCKED: Interactive Command
+- **Command**: $blocking
+- **Action**: Process killed by watchdog
+- **Fix**: Use non-interactive alternatives (npm init -y, git commit -m "msg")
+
+EOF
+      fi
 
       kill -9 "$blocking_pid" 2>/dev/null || true
       echo "GUTTER" > "$fifo" 2>/dev/null || true

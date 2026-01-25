@@ -21,6 +21,8 @@ Build a simple, mobile-first web application that shows which bins need to be pu
 10. Shows current week's collection schedule clearly
 11. Bins are collected on Tuesday mornings
 12. Make it cuter
+13. Remove all 'breathing' animations from the UI
+14. Enhance cuteness through more gratuitous use of pastel colors and emoji throughout the interface
 
 ## Success Criteria
 
@@ -41,6 +43,8 @@ Build a simple, mobile-first web application that shows which bins need to be pu
 15. [x] App works offline (minimal external dependencies)
 16. [x] Code is clean, well-organized, and maintainable
 17. [x] Make it cuter
+18. [ ] Remove all 'breathing' animations from the UI
+19. [ ] Enhance cuteness through more gratuitous use of pastel colors and emoji throughout the interface
 
 ## Example Output
 
