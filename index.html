@@ -78,9 +78,17 @@
 
         .week-title {
             font-size: 1.3em;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             color: #333;
             text-align: center;
+        }
+
+        .bin-date {
+            text-align: center;
+            color: #666;
+            font-size: 1em;
+            margin-bottom: 20px;
+            font-weight: 500;
         }
 
         .bin-card {
@@ -181,7 +189,7 @@
         }
 
         .week-date.current::after {
-            content: " ← This week";
+            content: " ← Next";
             color: #2e7d32;
             font-size: 0.85em;
         }
@@ -274,7 +282,8 @@
 
         <!-- Current Week View -->
         <div v-if="currentView === 'week'" class="current-week">
-            <div class="week-title">This Week's Bins 😊</div>
+            <div class="week-title">{{ weekTitle }} 😊</div>
+            <div class="bin-date">Next collection: {{ formatDate(nextBinDay) }}</div>
             
             <div class="bin-card green">
                 <div class="bin-header">
@@ -348,17 +357,43 @@
                 };
             },
             computed: {
+                nextBinDay() {
+                    // Calculate the next Tuesday (bin collection day)
+                    const today = new Date(this.today);
+                    const todayDay = today.getDay();
+                    let daysUntilTuesday;
+                    
+                    if (todayDay === 0) { // Sunday
+                        daysUntilTuesday = 2;
+                    } else if (todayDay === 1) { // Monday
+                        daysUntilTuesday = 1;
+                    } else if (todayDay === 2) { // Tuesday
+                        daysUntilTuesday = 7; // Next Tuesday
+                    } else { // Wednesday (3) through Saturday (6)
+                        daysUntilTuesday = (2 - todayDay + 7) % 7;
+                    }
+                    
+                    const nextTuesday = new Date(today);
+                    nextTuesday.setDate(today.getDate() + daysUntilTuesday);
+                    nextTuesday.setHours(0, 0, 0, 0);
+                    return nextTuesday;
+                },
                 currentWeekStart() {
-                    // Get Monday of current week
-                    const date = new Date(this.today);
-                    const day = date.getDay();
+                    // Get Monday of the week that contains the next bin day
+                    const binDay = new Date(this.nextBinDay);
+                    const day = binDay.getDay();
+                    // Tuesday is day 2, so Monday is 1 day before
                     const diff = day === 0 ? -6 : 1 - day; // If Sunday, go back 6 days; otherwise, go to Monday
-                    date.setDate(date.getDate() + diff);
-                    date.setHours(0, 0, 0, 0);
-                    return date;
+                    const monday = new Date(binDay);
+                    monday.setDate(binDay.getDate() + diff);
+                    monday.setHours(0, 0, 0, 0);
+                    return monday;
                 },
                 currentWeekBins() {
                     return this.getBinsForWeek(this.currentWeekStart);
+                },
+                weekTitle() {
+                    return "This Week's Bins";
                 },
                 calendarWeeks() {
                     const weeks = [];
