@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🗑️✨ Bin Day Reminder ✨🗑️</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
         * {
             margin: 0;
@@ -200,6 +199,27 @@
             box-shadow: 0 12px 28px rgba(255, 183, 77, 0.3);
         }
 
+        .bin-card.blue {
+            border-color: #93c5fd;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #bfdbfe 100%);
+            box-shadow: 0 4px 16px rgba(147, 197, 253, 0.3);
+        }
+        .bin-card.blue:hover { box-shadow: 0 12px 28px rgba(147, 197, 253, 0.4); }
+        .bin-card.black { border-color: #6b7280; background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 50%, #d1d5db 100%); box-shadow: 0 4px 16px rgba(107, 114, 128, 0.3); }
+        .bin-card.black:hover { box-shadow: 0 12px 28px rgba(107, 114, 128, 0.4); }
+        .bin-card.brown { border-color: #d4a574; background: linear-gradient(135deg, #fef3e2 0%, #f5e6d3 50%, #e8d5c4 100%); box-shadow: 0 4px 16px rgba(212, 165, 116, 0.3); }
+        .bin-card.brown:hover { box-shadow: 0 12px 28px rgba(212, 165, 116, 0.4); }
+        .bin-card.grey, .bin-card.gray { border-color: #9ca3af; background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 50%, #e5e7eb 100%); box-shadow: 0 4px 16px rgba(156, 163, 175, 0.3); }
+        .bin-card.grey:hover, .bin-card.gray:hover { box-shadow: 0 12px 28px rgba(156, 163, 175, 0.4); }
+        .bin-card.pink { border-color: #f9a8d4; background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%); box-shadow: 0 4px 16px rgba(249, 168, 212, 0.3); }
+        .bin-card.pink:hover { box-shadow: 0 12px 28px rgba(249, 168, 212, 0.4); }
+        .bin-card.purple { border-color: #c4b5fd; background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #ddd6fe 100%); box-shadow: 0 4px 16px rgba(196, 181, 253, 0.3); }
+        .bin-card.purple:hover { box-shadow: 0 12px 28px rgba(196, 181, 253, 0.4); }
+        .bin-card.orange { border-color: #fdba74; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%); box-shadow: 0 4px 16px rgba(253, 186, 116, 0.3); }
+        .bin-card.orange:hover { box-shadow: 0 12px 28px rgba(253, 186, 116, 0.4); }
+        .bin-card.default { border-color: #94a3b8; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%); box-shadow: 0 4px 16px rgba(148, 163, 184, 0.3); }
+        .bin-card.default:hover { box-shadow: 0 12px 28px rgba(148, 163, 184, 0.4); }
+
         .bin-card.inactive {
             opacity: 0.6;
             border-style: dashed;
@@ -334,12 +354,19 @@
             background: linear-gradient(135deg, #fef9c3 0%, #fef08a 50%, #fde047 100%);
             color: #854d0e;
         }
+        .week-bin.blue { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%); color: #1e40af; }
+        .week-bin.black { background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 50%, #9ca3af 100%); color: #1f2937; }
+        .week-bin.brown { background: linear-gradient(135deg, #f5e6d3 0%, #e8d5c4 50%, #d4a574 100%); color: #78350f; }
+        .week-bin.grey, .week-bin.gray { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 50%, #d1d5db 100%); color: #374151; }
+        .week-bin.pink { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 50%, #f9a8d4 100%); color: #9d174d; }
+        .week-bin.purple { background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 50%, #c4b5fd 100%); color: #5b21b6; }
+        .week-bin.orange { background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 50%, #fdba74 100%); color: #9a3412; }
+        .week-bin.default { background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%); color: #334155; }
 
         .smiley {
             font-size: 2em;
             text-align: center;
             margin-top: 25px;
-            animation: bounce 2.5s ease-in-out infinite;
         }
 
         @media (max-width: 400px) {
@@ -386,179 +413,423 @@
                 flex-direction: row;
             }
         }
+
+        .settings-toggle {
+            display: block;
+            margin: 0 auto 20px;
+            padding: 10px 20px;
+            border-radius: 16px;
+            border: 2px solid rgba(148, 163, 184, 0.5);
+            background: #f8fafc;
+            color: #475569;
+            font-size: 0.95em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .settings-toggle:hover { background: #e2e8f0; }
+        .settings-panel {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        .settings-panel h3 { font-size: 1.2em; color: #334155; margin-bottom: 16px; }
+        .settings-row { margin-bottom: 16px; }
+        .settings-row label { display: block; font-weight: 600; color: #475569; margin-bottom: 6px; font-size: 0.9em; }
+        .settings-row input, .settings-row select { width: 100%; max-width: 280px; padding: 10px 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 1em; }
+        .bin-list { margin-top: 12px; }
+        .bin-list-item { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+        .bin-list-item input[type="text"] { flex: 1; min-width: 120px; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; }
+        .bin-list-item .week-checks { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .bin-list-item .week-checks label { display: inline-flex; align-items: center; gap: 4px; margin: 0; font-weight: 500; font-size: 0.85em; }
+        .bin-list-item .week-checks input { width: auto; max-width: none; }
+        .btn-small { padding: 6px 12px; border-radius: 10px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; font-size: 0.85em; }
+        .btn-small:hover { background: #e2e8f0; }
+        .btn-small.danger { border-color: #fca5a5; color: #b91c1c; }
+        .btn-small.danger:hover { background: #fee2e2; }
+        .add-bin-btn { margin-top: 8px; }
     </style>
 </head>
 <body>
     <div id="app">
         <h1>🗑️✨ Bin Day Reminder ✨🗑️</h1>
-        <p class="subtitle">🌅 Collection day: Tuesday mornings 🌅 💫</p>
+        <p class="subtitle" id="subtitle">🌅 Collection day: Tuesday mornings 🌅 💫</p>
 
-        <div class="view-toggle">
-            <button class="btn" :class="{ active: currentView === 'week' }" @click="currentView = 'week'">
-                📅✨ This Week ✨
-            </button>
-            <button class="btn" :class="{ active: currentView === 'calendar' }" @click="currentView = 'calendar'">
-                📆🌟 Calendar 🌟
-            </button>
+        <button class="settings-toggle" id="settingsToggle" type="button">⚙️ Configure schedule</button>
+        <div class="settings-panel" id="settingsPanel" hidden>
+            <h3>Schedule</h3>
+            <div class="settings-row">
+                <label>Collection day of week</label>
+                <select id="collectionDay">
+                    <option value="0">Sunday</option>
+                    <option value="1">Monday</option>
+                    <option value="2">Tuesday</option>
+                    <option value="3">Wednesday</option>
+                    <option value="4">Thursday</option>
+                    <option value="5">Friday</option>
+                    <option value="6">Saturday</option>
+                </select>
+            </div>
+            <div class="settings-row">
+                <label>Schedule start date (Monday of first cycle week)</label>
+                <input type="date" id="scheduleStartDate">
+            </div>
+            <div class="settings-row">
+                <label>Cycle length (weeks)</label>
+                <input type="number" id="cycleLength" min="1" max="52" value="2">
+            </div>
+            <h3>Bins</h3>
+            <div class="bin-list" id="binList"></div>
+            <button class="btn-small add-bin-btn" id="addBinBtn" type="button">+ Add bin</button>
         </div>
 
-        <!-- Current Week View -->
-        <div v-if="currentView === 'week'" class="current-week">
-            <div class="week-title">{{ weekTitle }} 😊✨💖</div>
-            <div class="bin-date">⏰ Next collection: {{ formatDate(nextBinDay) }} ⏰💫</div>
-            
-            <div class="bin-card green">
-                <div class="bin-header">
-                    <span class="bin-emoji">🟢</span>
-                    <span class="bin-name">Green Bin 🌿💚</span>
-                </div>
-                <div class="bin-status active">✅ Put out this week! 🎉✨</div>
-            </div>
+        <div class="view-toggle">
+            <button class="btn" id="viewWeek" type="button">📅✨ This Week ✨</button>
+            <button class="btn" id="viewCalendar" type="button">📆🌟 Calendar 🌟</button>
+        </div>
 
-            <div class="bin-card red" :class="{ inactive: !currentWeekBins.red }">
-                <div class="bin-header">
-                    <span class="bin-emoji">🔴</span>
-                    <span class="bin-name">Red Bin ❤️💖</span>
-                </div>
-                <div class="bin-status" :class="{ active: currentWeekBins.red }">
-                    {{ currentWeekBins.red ? '✅ Put out this week! 🎉✨' : '⏸️ Not this week 😴💤' }}
-                </div>
-            </div>
-
-            <div class="bin-card yellow" :class="{ inactive: !currentWeekBins.yellow }">
-                <div class="bin-header">
-                    <span class="bin-emoji">🟡</span>
-                    <span class="bin-name">Yellow Bin 💛⭐</span>
-                </div>
-                <div class="bin-status" :class="{ active: currentWeekBins.yellow }">
-                    {{ currentWeekBins.yellow ? '✅ Put out this week! 🎉✨' : '⏸️ Not this week 😴💤' }}
-                </div>
-            </div>
-
+        <div id="weekView" class="current-week">
+            <div class="week-title" id="weekTitle">This Week's Bins 😊✨💖</div>
+            <div class="bin-date" id="nextBinDate">⏰ Next collection: … ⏰💫</div>
+            <div id="weekBinCards"></div>
             <div class="smiley">😊 Have a great week! 🌟💫✨</div>
         </div>
 
-        <!-- Calendar View -->
-        <div v-if="currentView === 'calendar'" class="calendar-view">
+        <div id="calendarView" class="calendar-view" hidden>
             <div class="calendar-title">🗓️ Bin Collection Calendar 📅✨💖</div>
-            
-            <div v-for="week in calendarWeeks" :key="week.weekStart" 
-                 class="week-item" :class="{ current: week.isCurrent }">
-                <div class="week-date" :class="{ current: week.isCurrent }">
-                    📆 Week of {{ formatDate(week.weekStart) }} 📅
-                </div>
-                <div class="week-bins">
-                    <div class="week-bin green">
-                        <span>🟢</span>
-                        <span>Green 🌿💚</span>
-                    </div>
-                    <div v-if="week.bins.red" class="week-bin red">
-                        <span>🔴</span>
-                        <span>Red ❤️💖</span>
-                    </div>
-                    <div v-if="week.bins.yellow" class="week-bin yellow">
-                        <span>🟡</span>
-                        <span>Yellow 💛⭐</span>
-                    </div>
-                </div>
-            </div>
-
+            <div id="calendarWeeks"></div>
             <div class="smiley">🗓️ Plan ahead! ✨💫🌟</div>
         </div>
     </div>
 
     <script>
-        const { createApp } = Vue;
+        (function () {
+            const STORAGE_KEY = 'binday-config';
+            const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-        createApp({
-            data() {
+            function defaultConfig() {
                 return {
-                    currentView: 'week',
-                    referenceDate: new Date(2026, 0, 6), // Monday, January 5, 2026 (month is 0-indexed)
-                    today: new Date()
+                    scheduleStartDate: '2026-01-05',
+                    collectionDayOfWeek: 2,
+                    cycleLength: 2,
+                    bins: [
+                        { name: 'Green Bin', weeksInCycle: [0, 1] },
+                        { name: 'Red Bin', weeksInCycle: [0] },
+                        { name: 'Yellow Bin', weeksInCycle: [1] }
+                    ]
                 };
-            },
-            computed: {
-                nextBinDay() {
-                    // Calculate the next Tuesday (bin collection day)
-                    const today = new Date(this.today);
-                    const todayDay = today.getDay();
-                    let daysUntilTuesday;
-                    
-                    if (todayDay === 0) { // Sunday
-                        daysUntilTuesday = 2;
-                    } else if (todayDay === 1) { // Monday
-                        daysUntilTuesday = 1;
-                    } else if (todayDay === 2) { // Tuesday
-                        daysUntilTuesday = 7; // Next Tuesday
-                    } else { // Wednesday (3) through Saturday (6)
-                        daysUntilTuesday = (2 - todayDay + 7) % 7;
-                    }
-                    
-                    const nextTuesday = new Date(today);
-                    nextTuesday.setDate(today.getDate() + daysUntilTuesday);
-                    nextTuesday.setHours(0, 0, 0, 0);
-                    return nextTuesday;
-                },
-                currentWeekStart() {
-                    // Get Monday of the week that contains the next bin day
-                    const binDay = new Date(this.nextBinDay);
-                    const day = binDay.getDay();
-                    // Tuesday is day 2, so Monday is 1 day before
-                    const diff = day === 0 ? -6 : 1 - day; // If Sunday, go back 6 days; otherwise, go to Monday
-                    const monday = new Date(binDay);
-                    monday.setDate(binDay.getDate() + diff);
-                    monday.setHours(0, 0, 0, 0);
-                    return monday;
-                },
-                currentWeekBins() {
-                    return this.getBinsForWeek(this.currentWeekStart);
-                },
-                weekTitle() {
-                    return "This Week's Bins";
-                },
-                calendarWeeks() {
-                    const weeks = [];
-                    const currentWeekTime = this.currentWeekStart.getTime();
-                    
-                    // Generate 8 weeks starting from current week
-                    for (let i = 0; i < 8; i++) {
-                        const weekStart = new Date(this.currentWeekStart);
-                        weekStart.setDate(weekStart.getDate() + (i * 7));
-                        
-                        weeks.push({
-                            weekStart: weekStart,
-                            bins: this.getBinsForWeek(weekStart),
-                            isCurrent: weekStart.getTime() === currentWeekTime
-                        });
-                    }
-                    
-                    return weeks;
-                }
-            },
-            methods: {
-                getBinsForWeek(weekStart) {
-                    // Calculate week number difference from reference date
-                    // Reference: Monday Jan 5, 2026 was a RED bin week
-                    const msPerWeek = 7 * 24 * 60 * 60 * 1000;
-                    const weeksDiff = Math.floor((weekStart.getTime() - this.referenceDate.getTime()) / msPerWeek);
-                    
-                    // Red bin on even weeks (0, 2, 4...), Yellow on odd weeks (1, 3, 5...)
-                    // Since reference week is RED (week 0), even weeks = red, odd = yellow
-                    const isRedWeek = weeksDiff % 2 === 0;
-                    
-                    return {
-                        green: true, // Always collected
-                        red: isRedWeek,
-                        yellow: !isRedWeek
-                    };
-                },
-                formatDate(date) {
-                    const options = { month: 'short', day: 'numeric', year: 'numeric' };
-                    return date.toLocaleDateString('en-US', options);
+            }
+
+            function loadConfig() {
+                try {
+                    var raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) return defaultConfig();
+                    var parsed = JSON.parse(raw);
+                    var config = { ...defaultConfig(), ...parsed };
+                    if (!Array.isArray(config.bins) || config.bins.length === 0) config.bins = defaultConfig().bins;
+                    config.bins = config.bins.map(function (b) {
+                        return {
+                            name: b.name || 'Bin',
+                            weeksInCycle: (Array.isArray(b.weeksInCycle) ? b.weeksInCycle : [0]).map(function (n) { return Math.max(0, parseInt(n, 10) || 0); })
+                        };
+                    });
+                    config.cycleLength = Math.max(1, Math.min(52, parseInt(config.cycleLength, 10) || 2));
+                    config.collectionDayOfWeek = Math.max(0, Math.min(6, parseInt(config.collectionDayOfWeek, 10)));
+                    config.bins.forEach(function (b) {
+                        b.weeksInCycle = b.weeksInCycle.filter(function (w) { return w >= 0 && w < config.cycleLength; });
+                        if (b.weeksInCycle.length === 0) b.weeksInCycle = [0];
+                    });
+                    return config;
+                } catch (_) {
+                    return defaultConfig();
                 }
             }
-        }).mount('#app');
+
+            function saveConfigToStorage(config) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    scheduleStartDate: config.scheduleStartDate,
+                    collectionDayOfWeek: config.collectionDayOfWeek,
+                    cycleLength: config.cycleLength,
+                    bins: config.bins.map(function (b) {
+                        return { name: b.name, weeksInCycle: (b.weeksInCycle || []).slice() };
+                    })
+                }));
+            }
+
+            var COLOR_MAP = [
+                { keys: ['green'], c: 'green' }, { keys: ['red'], c: 'red' }, { keys: ['yellow'], c: 'yellow' },
+                { keys: ['blue'], c: 'blue' }, { keys: ['black'], c: 'black' }, { keys: ['brown'], c: 'brown' },
+                { keys: ['grey', 'gray'], c: 'grey' }, { keys: ['pink'], c: 'pink' }, { keys: ['purple'], c: 'purple' },
+                { keys: ['orange'], c: 'orange' }
+            ];
+            function colorClass(name) {
+                if (!name || typeof name !== 'string') return 'default';
+                var lower = name.toLowerCase();
+                for (var i = 0; i < COLOR_MAP.length; i++) {
+                    var item = COLOR_MAP[i];
+                    if (item.keys.some(function (k) { return lower.indexOf(k) !== -1; })) return item.c;
+                }
+                return 'default';
+            }
+
+            var EMOJI_MAP = { green: '🟢', red: '🔴', yellow: '🟡', blue: '🔵', black: '⬛', brown: '🟤', grey: '⚪', gray: '⚪', pink: '🩷', purple: '🟣', orange: '🟠' };
+            function binEmoji(name) {
+                if (!name || typeof name !== 'string') return '🗑️';
+                var lower = name.toLowerCase();
+                for (var key in EMOJI_MAP) { if (lower.indexOf(key) !== -1) return EMOJI_MAP[key]; }
+                return '🗑️';
+            }
+
+            function formatDate(date) {
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            }
+
+            function getNextBinDay(config) {
+                var today = new Date();
+                var todayDay = today.getDay();
+                var target = config.collectionDayOfWeek;
+                var daysUntil = (target - todayDay + 7) % 7;
+                if (daysUntil === 0) daysUntil = 7;
+                var next = new Date(today);
+                next.setDate(today.getDate() + daysUntil);
+                next.setHours(0, 0, 0, 0);
+                return next;
+            }
+
+            /** Monday of the week that contains the given date (Mon–Sun). */
+            function getWeekStart(date) {
+                var d = new Date(date);
+                var day = d.getDay();
+                var diff = day === 0 ? -6 : 1 - day;
+                var monday = new Date(d);
+                monday.setDate(d.getDate() + diff);
+                monday.setHours(0, 0, 0, 0);
+                return monday;
+            }
+
+            /** Collection day (e.g. Tuesday) that falls in the same week as date. */
+            function getCollectionDayInWeek(config, date) {
+                var weekStart = getWeekStart(date);
+                var collectionDate = new Date(weekStart);
+                var daysToAdd = config.collectionDayOfWeek === 0 ? 6 : config.collectionDayOfWeek - 1; // Mon=0, Tue=1, ..., Sun=6
+                collectionDate.setDate(weekStart.getDate() + daysToAdd);
+                collectionDate.setHours(0, 0, 0, 0);
+                return collectionDate;
+            }
+
+            function getBinsForWeek(config, weekStart) {
+                var start = new Date(config.scheduleStartDate + 'T00:00:00');
+                var msPerWeek = 7 * 24 * 60 * 60 * 1000;
+                var weeksDiff = Math.floor((weekStart.getTime() - start.getTime()) / msPerWeek);
+                var cycleIndex = ((weeksDiff % config.cycleLength) + config.cycleLength) % config.cycleLength;
+                return config.bins.map(function (bin) {
+                    var weeks = bin.weeksInCycle || [];
+                    return weeks.some(function (w) { return w === cycleIndex; });
+                });
+            }
+
+            var state = {
+                config: loadConfig(),
+                currentView: 'week',
+                showSettings: false
+            };
+
+            function escapeHtml(s) {
+                var div = document.createElement('div');
+                div.textContent = s;
+                return div.innerHTML;
+            }
+
+            function renderSubtitle() {
+                var el = document.getElementById('subtitle');
+                if (el) el.textContent = '🌅 Collection day: ' + (DAY_NAMES[state.config.collectionDayOfWeek] || 'Tuesday') + ' mornings 🌅 💫';
+            }
+
+            function renderSettingsPanel() {
+                var panel = document.getElementById('settingsPanel');
+                var toggle = document.getElementById('settingsToggle');
+                if (panel) panel.hidden = !state.showSettings;
+                if (toggle) toggle.textContent = state.showSettings ? '▼ Hide settings' : '⚙️ Configure schedule';
+
+                document.getElementById('collectionDay').value = String(state.config.collectionDayOfWeek);
+                document.getElementById('scheduleStartDate').value = state.config.scheduleStartDate || '2026-01-05';
+                document.getElementById('cycleLength').value = String(state.config.cycleLength);
+
+                var binList = document.getElementById('binList');
+                binList.innerHTML = '';
+                state.config.bins.forEach(function (bin, index) {
+                    var item = document.createElement('div');
+                    item.className = 'bin-list-item';
+                    var nameInput = document.createElement('input');
+                    nameInput.type = 'text';
+                    nameInput.placeholder = 'Bin name (e.g. Green bin)';
+                    nameInput.value = bin.name;
+                    nameInput.dataset.binIndex = String(index);
+                    nameInput.addEventListener('input', function () {
+                        state.config.bins[index].name = nameInput.value;
+                        saveConfigToStorage(state.config);
+                    });
+                    var weekChecks = document.createElement('div');
+                    weekChecks.className = 'week-checks';
+                    for (var w = 0; w < state.config.cycleLength; w++) {
+                        var lab = document.createElement('label');
+                        var cb = document.createElement('input');
+                        cb.type = 'checkbox';
+                        cb.value = String(w);
+                        cb.checked = (bin.weeksInCycle || []).indexOf(w) !== -1;
+                        cb.dataset.binIndex = String(index);
+                        cb.dataset.weekIndex = String(w);
+                        cb.addEventListener('change', function () {
+                            var i = parseInt(this.dataset.binIndex, 10);
+                            var wi = parseInt(this.dataset.weekIndex, 10);
+                            var arr = state.config.bins[i].weeksInCycle || [];
+                            if (this.checked) {
+                                if (arr.indexOf(wi) === -1) arr.push(wi);
+                            } else {
+                                state.config.bins[i].weeksInCycle = arr.filter(function (x) { return x !== wi; });
+                                if (state.config.bins[i].weeksInCycle.length === 0) state.config.bins[i].weeksInCycle = [0];
+                                saveConfigToStorage(state.config);
+                                render();
+                                return;
+                            }
+                            state.config.bins[i].weeksInCycle = arr.slice().sort(function (a, b) { return a - b; });
+                            saveConfigToStorage(state.config);
+                            render();
+                        });
+                        lab.appendChild(cb);
+                        lab.appendChild(document.createTextNode(' W' + w));
+                        weekChecks.appendChild(lab);
+                    }
+                    var removeBtn = document.createElement('button');
+                    removeBtn.className = 'btn-small danger';
+                    removeBtn.type = 'button';
+                    removeBtn.textContent = 'Remove';
+                    removeBtn.addEventListener('click', function () {
+                        state.config.bins.splice(index, 1);
+                        if (state.config.bins.length === 0) state.config.bins = [{ name: 'Bin', weeksInCycle: [0] }];
+                        saveConfigToStorage(state.config);
+                        render();
+                    });
+                    item.appendChild(nameInput);
+                    item.appendChild(weekChecks);
+                    item.appendChild(removeBtn);
+                    binList.appendChild(item);
+                });
+            }
+
+            function renderViews() {
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+                var nextBinDay = getNextBinDay(state.config);
+                var thisWeekCollectionDay = getCollectionDayInWeek(state.config, today);
+                // Once we've passed this week's collection day, show the next collection's week
+                var currentWeekStart = today > thisWeekCollectionDay
+                    ? getWeekStart(nextBinDay)
+                    : getWeekStart(today);
+                var currentWeekBins = getBinsForWeek(state.config, currentWeekStart);
+
+                document.getElementById('nextBinDate').textContent = '⏰ Next collection: ' + formatDate(nextBinDay) + ' ⏰💫';
+
+                var weekBinCards = document.getElementById('weekBinCards');
+                weekBinCards.innerHTML = '';
+                state.config.bins.forEach(function (bin, index) {
+                    var active = currentWeekBins[index];
+                    var card = document.createElement('div');
+                    card.className = 'bin-card ' + colorClass(bin.name) + (active ? '' : ' inactive');
+                    card.innerHTML = '<div class="bin-header"><span class="bin-emoji">' + escapeHtml(binEmoji(bin.name)) + '</span><span class="bin-name">' + escapeHtml(bin.name) + '</span></div>' +
+                        '<div class="bin-status' + (active ? ' active' : '') + '">' + (active ? '✅ Put out this week! 🎉✨' : '⏸️ Not this week 😴💤') + '</div>';
+                    weekBinCards.appendChild(card);
+                });
+
+                var calendarWeeksEl = document.getElementById('calendarWeeks');
+                calendarWeeksEl.innerHTML = '';
+                var currentWeekTime = currentWeekStart.getTime();
+                for (var i = 0; i < 8; i++) {
+                    var weekStart = new Date(currentWeekStart);
+                    weekStart.setDate(weekStart.getDate() + (i * 7));
+                    var binsThisWeek = getBinsForWeek(state.config, weekStart);
+                    var weekItem = document.createElement('div');
+                    weekItem.className = 'week-item' + (weekStart.getTime() === currentWeekTime ? ' current' : '');
+                    var weekDate = document.createElement('div');
+                    weekDate.className = 'week-date' + (weekStart.getTime() === currentWeekTime ? ' current' : '');
+                    weekDate.textContent = '📆 Week of ' + formatDate(weekStart) + ' 📅';
+                    weekItem.appendChild(weekDate);
+                    var weekBins = document.createElement('div');
+                    weekBins.className = 'week-bins';
+                    state.config.bins.forEach(function (bin, idx) {
+                        if (!binsThisWeek[idx]) return;
+                        var pill = document.createElement('div');
+                        pill.className = 'week-bin ' + colorClass(bin.name);
+                        pill.innerHTML = '<span>' + escapeHtml(binEmoji(bin.name)) + '</span><span>' + escapeHtml(bin.name) + '</span>';
+                        weekBins.appendChild(pill);
+                    });
+                    weekItem.appendChild(weekBins);
+                    calendarWeeksEl.appendChild(weekItem);
+                }
+            }
+
+            function renderViewToggle() {
+                document.getElementById('weekView').hidden = state.currentView !== 'week';
+                document.getElementById('calendarView').hidden = state.currentView !== 'calendar';
+                document.getElementById('viewWeek').className = 'btn' + (state.currentView === 'week' ? ' active' : '');
+                document.getElementById('viewCalendar').className = 'btn' + (state.currentView === 'calendar' ? ' active' : '');
+            }
+
+            function render() {
+                renderSubtitle();
+                renderSettingsPanel();
+                renderViews();
+                renderViewToggle();
+            }
+
+            document.getElementById('settingsToggle').addEventListener('click', function () {
+                state.showSettings = !state.showSettings;
+                render();
+            });
+
+            document.getElementById('collectionDay').addEventListener('change', function () {
+                state.config.collectionDayOfWeek = parseInt(this.value, 10);
+                saveConfigToStorage(state.config);
+                render();
+            });
+
+            document.getElementById('scheduleStartDate').addEventListener('input', function () {
+                state.config.scheduleStartDate = this.value || '2026-01-05';
+                saveConfigToStorage(state.config);
+                render();
+            });
+
+            document.getElementById('cycleLength').addEventListener('change', function () {
+                var n = Math.max(1, Math.min(52, parseInt(this.value, 10) || 2));
+                state.config.cycleLength = n;
+                state.config.bins.forEach(function (b) {
+                    b.weeksInCycle = (b.weeksInCycle || []).filter(function (w) { return w >= 0 && w < n; });
+                    if (b.weeksInCycle.length === 0) b.weeksInCycle = [0];
+                });
+                saveConfigToStorage(state.config);
+                render();
+            });
+
+            document.getElementById('addBinBtn').addEventListener('click', function () {
+                state.config.bins.push({ name: 'New Bin', weeksInCycle: [0] });
+                saveConfigToStorage(state.config);
+                render();
+            });
+
+            document.getElementById('viewWeek').addEventListener('click', function () {
+                state.currentView = 'week';
+                renderViewToggle();
+            });
+
+            document.getElementById('viewCalendar').addEventListener('click', function () {
+                state.currentView = 'calendar';
+                renderViewToggle();
+            });
+
+            render();
+        })();
     </script>
 </body>
 </html>
