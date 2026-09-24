@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<!--
+Throwaway UI prototype. Nine layouts of the bin reminder, switchable via ?variant=.
+Question: which design direction, and which layout inside it, should Bin Day use?
+Not production. Reads the same binday-config schedule as index.html.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bin Day — design options</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Fredoka:wght@500;700&family=Gaegu:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,500&family=Outfit:wght@300;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: "Segoe UI", sans-serif; color: #1c1917; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .chrome {
+      position: fixed;
+      z-index: 20;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      width: min(560px, calc(100% - 20px));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+    }
+    .chrome > * { pointer-events: auto; }
+    #state {
+      margin: 0;
+      max-width: 100%;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #fff;
+      color: #44403c;
+      font-size: 12px;
+      line-height: 1.3;
+      border: 1px solid #d6d3d1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .switcher {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+    .switcher button {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 999px;
+      background: #2a2a2a;
+      color: #fff;
+      font-size: 18px;
+    }
+    .switcher-label { flex: 1; min-width: 0; text-align: center; line-height: 1.2; }
+    .switcher-label strong { display: block; font-size: 14px; }
+    .switcher-label span {
+      display: block;
+      font-size: 11px;
+      color: #a8a29e;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    body.mode-board { background: #e7e2da; }
+    .board { padding: 28px 22px 200px; max-width: 1100px; margin: 0 auto; }
+    .board-head { max-width: 640px; margin-bottom: 28px; }
+    .eyebrow {
+      margin: 0 0 6px;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #78716c;
+    }
+    .board h1 { margin: 0 0 8px; font-size: 32px; letter-spacing: -0.03em; }
+    .board-head p { margin: 0; color: #57534e; line-height: 1.45; }
+    .group { margin-top: 28px; }
+    .group h2 { margin: 0 0 12px; font-size: 16px; }
+    .group-row, .final-row { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; }
+    .final-row { gap: 22px; align-items: flex-start; }
+    .opt {
+      flex: 0 0 auto;
+      width: 210px;
+      color: inherit;
+      text-decoration: none;
+    }
+    .phone {
+      width: 210px;
+      height: 436px;
+      border: 8px solid #1c1917;
+      border-radius: 28px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .phone .stage {
+      width: 390px;
+      height: 844px;
+      transform: scale(0.4974);
+      transform-origin: top left;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .phone .stage > * { height: 844px; overflow: hidden; }
+    .opt-name { margin: 8px 0 2px; font-size: 14px; }
+    .opt p { margin: 0; font-size: 12px; line-height: 1.35; color: #57534e; }
+
+    body.mode-full { background: #111; }
+    .screen {
+      width: min(430px, 100%);
+      height: 100vh;
+      margin: 0 auto;
+      overflow: auto;
+      background: #fff;
+    }
+    .screen > * { height: 100%; overflow: auto; }
+
+    .vtoggle { display: flex; gap: 8px; }
+    .vtoggle button { border: 0; background: transparent; padding: 0; }
+
+    /* Sleek A — Void */
+    .v-sleek-a {
+      background: #0c0c0c;
+      color: #fafaf9;
+      font-family: Outfit, sans-serif;
+      padding: 28px 26px 100px;
+    }
+    .v-sleek-a .vtoggle button {
+      color: #737373;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    .v-sleek-a .vtoggle button.on { color: #fff; }
+    .v-sleek-a .date {
+      display: flex;
+      align-items: flex-end;
+      gap: 14px;
+      margin: 54px 0 6px;
+    }
+    .v-sleek-a .num {
+      font-family: Newsreader, serif;
+      font-weight: 400;
+      font-size: 132px;
+      line-height: 0.78;
+      letter-spacing: -0.05em;
+    }
+    .v-sleek-a .meta { padding-bottom: 12px; }
+    .v-sleek-a .meta b {
+      display: block;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      font-size: 13px;
+    }
+    .v-sleek-a .meta span { color: #a8a29e; font-size: 13px; font-weight: 300; }
+    .v-sleek-a .lead {
+      margin: 0 0 28px;
+      color: #a8a29e;
+      font-weight: 300;
+      font-size: 15px;
+    }
+    .v-sleek-a .row {
+      display: grid;
+      grid-template-columns: 3px 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 0;
+      border-top: 1px solid #262626;
+    }
+    .v-sleek-a .tick { height: 22px; }
+    .v-sleek-a .row strong { font-weight: 400; font-size: 18px; }
+    .v-sleek-a .row em { font-style: normal; letter-spacing: 0.18em; font-size: 12px; }
+    .v-sleek-a .row.off { color: #52525b; }
+    .v-sleek-a .row.off .tick { opacity: 0.35; }
+    .v-sleek-a .weekline {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 0;
+      border-top: 1px solid #262626;
+      color: #a8a29e;
+      font-weight: 300;
+    }
+    .v-sleek-a .weekline.now { color: #fff; }
+    .v-sleek-a .dots { display: flex; gap: 6px; flex-wrap: wrap; }
+    .v-sleek-a .dots i {
+      width: 8px;
+      height: 8px;
+      display: block;
+    }
+
+    /* Sleek B — Ledger */
+    .v-sleek-b {
+      background: #f6f3ec;
+      color: #1c1917;
+      font-family: Newsreader, serif;
+      padding: 32px 28px 100px;
+    }
+    .v-sleek-b .vtoggle button {
+      font-family: Outfit, sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: #78716c;
+    }
+    .v-sleek-b .vtoggle button.on { color: #1c1917; }
+    .v-sleek-b header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid #1c1917;
+      padding-bottom: 12px;
+      margin: 28px 0 0;
+    }
+    .v-sleek-b header p { margin: 0; }
+    .v-sleek-b header .k { font-family: Outfit, sans-serif; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+    .v-sleek-b header .big { font-size: 28px; line-height: 1; margin-top: 4px; }
+    .v-sleek-b .entry {
+      display: grid;
+      grid-template-columns: 28px 14px 1fr auto;
+      gap: 12px;
+      align-items: baseline;
+      padding: 16px 0;
+      border-bottom: 1px solid #d6d3d1;
+    }
+    .v-sleek-b .n { font-family: Outfit, sans-serif; font-size: 12px; color: #78716c; }
+    .v-sleek-b .sw { width: 10px; height: 10px; align-self: center; }
+    .v-sleek-b .entry strong { font-weight: 500; font-size: 20px; }
+    .v-sleek-b .entry em { font-style: italic; color: #57534e; }
+    .v-sleek-b .entry.off { color: #a8a29e; }
+    .v-sleek-b .weekhead {
+      margin-top: 22px;
+      font-family: Outfit, sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .v-sleek-b .weekhead.now::before { content: "■ "; }
+
+    /* Sleek C — Split, pushed harder */
+    .v-sleek-c {
+      display: grid;
+      grid-template-columns: 34% 1fr;
+      background: #050505;
+      color: #fafaf9;
+      font-family: Outfit, sans-serif;
+      overflow: hidden;
+    }
+    .v-sleek-c aside {
+      background: #050505;
+      color: #fafaf9;
+      padding: 20px 0 80px 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .v-sleek-c .vtoggle button {
+      color: #52525b;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 10px;
+    }
+    .v-sleek-c .vtoggle button.on { color: #fff; }
+    .v-sleek-c .month {
+      margin: 28px 0 0;
+      letter-spacing: 0.46em;
+      font-size: 11px;
+      color: #a1a1aa;
+    }
+    .v-sleek-c .num {
+      margin: 0 -18px 0 -6px;
+      font-family: Newsreader, serif;
+      font-weight: 500;
+      font-size: 148px;
+      line-height: 0.72;
+      letter-spacing: -0.07em;
+    }
+    .v-sleek-c .day {
+      margin: 10px 0 0;
+      font-family: Newsreader, serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+    }
+    .v-sleek-c .hint {
+      margin: 22px 12px 0 0;
+      color: #71717a;
+      font-weight: 300;
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .v-sleek-c .pane { display: flex; flex-direction: column; min-height: 0; overflow: auto; background: #050505; }
+    .v-sleek-c .slab {
+      flex: 1;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px 18px 22px;
+    }
+    .v-sleek-c .slab strong {
+      font-family: Newsreader, serif;
+      font-weight: 500;
+      font-size: 36px;
+      letter-spacing: -0.04em;
+      line-height: 0.9;
+    }
+    .v-sleek-c .slab em { font-style: normal; letter-spacing: 0.42em; font-size: 12px; margin-top: 10px; }
+    .v-sleek-c .slab.off {
+      flex: 0 0 58px;
+      min-height: 58px;
+      background: #050505 !important;
+      color: #3f3f46 !important;
+      box-shadow: inset 5px 0 0 var(--tick, #3f3f46);
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    .v-sleek-c .slab.off strong { font-size: 16px; font-family: Outfit, sans-serif; font-weight: 400; }
+    .v-sleek-c .slab.off em { letter-spacing: 0.28em; margin-top: 2px; }
+    .v-sleek-c .strip {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      padding: 16px 14px;
+      border-bottom: 1px solid #27272a;
+      font-size: 13px;
+      color: #a1a1aa;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .v-sleek-c .strip.now {
+      flex: 1;
+      background: #fafaf9;
+      color: #050505;
+      font-family: Newsreader, serif;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+      text-transform: none;
+    }
+    .v-sleek-c .pips { display: flex; gap: 5px; }
+    .v-sleek-c .pips i { width: 12px; height: 12px; display: block; }
+
+    /* Kawaii A — Stickers, pushed cuter */
+    .v-kawaii-a {
+      position: relative;
+      background-color: #fff5fb;
+      background-image:
+        radial-gradient(circle at 8% 12%, #ffd0e8 0 68px, transparent 70px),
+        radial-gradient(circle at 92% 6%, #fff1b8 0 48px, transparent 50px),
+        radial-gradient(circle at 88% 78%, #c8ffe8 0 72px, transparent 74px),
+        radial-gradient(circle at 18% 88%, #e4d4ff 0 46px, transparent 48px),
+        radial-gradient(#ffc2d8 1.4px, transparent 1.5px);
+      background-size: auto, auto, auto, auto, 18px 18px;
+      font-family: Fredoka, sans-serif;
+      padding: 16px 14px 100px;
+      color: #6b2d52;
+      overflow: hidden;
+    }
+    .v-kawaii-a .float {
+      position: absolute;
+      color: #ff8fb8;
+      font-size: 16px;
+      pointer-events: none;
+    }
+    .v-kawaii-a .float.a { top: 18px; right: 22px; }
+    .v-kawaii-a .float.b { top: 120px; left: 10px; color: #f0b429; font-size: 13px; }
+    .v-kawaii-a .float.c { bottom: 120px; right: 16px; color: #7dcea0; }
+    .v-kawaii-a .vtoggle { position: relative; z-index: 1; }
+    .v-kawaii-a .vtoggle button {
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      color: #e56b9a;
+      border: 2px solid #ffd0e6;
+    }
+    .v-kawaii-a .vtoggle button.on { background: #ff8fb8; color: #fff; border-color: #ff8fb8; }
+    .v-kawaii-a .hello { position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; margin: 14px 0 4px; }
+    .v-kawaii-a .hello img {
+      width: 118px;
+      height: 118px;
+      border-radius: 40% 60% 55% 45%;
+      object-fit: cover;
+      background: #fff6e8;
+      border: 4px solid #fff;
+      box-shadow: 0 8px 0 #ffd0e6;
+    }
+    .v-kawaii-a .bubble {
+      position: relative;
+      background: #fff;
+      border-radius: 24px 24px 24px 8px;
+      padding: 12px 14px 12px 16px;
+      border: 3px solid #ffb3d1;
+      box-shadow: 4px 4px 0 #ffe0f0;
+    }
+    .v-kawaii-a .bubble::before {
+      content: "";
+      position: absolute;
+      left: -12px;
+      bottom: 16px;
+      border-width: 8px 12px 8px 0;
+      border-style: solid;
+      border-color: transparent #ffb3d1 transparent transparent;
+    }
+    .v-kawaii-a .bubble strong { display: block; font-size: 26px; line-height: 1; color: #e44588; }
+    .v-kawaii-a .bubble span { font-size: 14px; }
+    .v-kawaii-a h3 { position: relative; z-index: 1; margin: 16px 6px 8px; font-size: 18px; font-weight: 700; }
+    .v-kawaii-a .stickers { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .v-kawaii-a .sticker {
+      position: relative;
+      width: 142px;
+      height: 142px;
+      border-radius: 48% 52% 50% 50%;
+      border: 5px solid #fff;
+      box-shadow: 0 0 0 3px #ffd6e8, 0 8px 0 rgba(255, 143, 184, 0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .v-kawaii-a .spark {
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      font-size: 12px;
+      color: #f0b429;
+    }
+    .v-kawaii-a .face { display: flex; gap: 10px; align-items: center; }
+    .v-kawaii-a .face i {
+      width: 12px;
+      height: 14px;
+      background: #4a2438;
+      border-radius: 50%;
+      display: block;
+      position: relative;
+    }
+    .v-kawaii-a .face i::after {
+      content: "";
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+    }
+    .v-kawaii-a .blush { display: flex; gap: 18px; margin-top: 1px; }
+    .v-kawaii-a .blush b {
+      width: 12px;
+      height: 7px;
+      background: #ff9bb8;
+      border-radius: 50%;
+      display: block;
+      opacity: 0.9;
+    }
+    .v-kawaii-a .smile {
+      width: 18px;
+      height: 8px;
+      border-bottom: 2px solid #4a2438;
+      border-radius: 0 0 12px 12px;
+      margin-top: 1px;
+    }
+    .v-kawaii-a .sticker strong { font-size: 15px; margin-top: 2px; }
+    .v-kawaii-a .sticker small { font-size: 12px; }
+    .v-kawaii-a .sticker.asleep {
+      width: 108px;
+      height: 108px;
+      opacity: 0.85;
+      filter: saturate(0.75);
+    }
+    .v-kawaii-a .sticker.asleep .face i {
+      height: 7px;
+      background: transparent;
+      border-bottom: 2px solid #4a2438;
+      border-radius: 0 0 10px 10px;
+    }
+    .v-kawaii-a .sticker.asleep .face i::after { display: none; }
+    .v-kawaii-a .cluster {
+      position: relative;
+      background: #fff;
+      border-radius: 22px;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 3px solid #ffe0ee;
+      box-shadow: 3px 3px 0 #ffd6e8;
+    }
+    .v-kawaii-a .cluster.now { border-color: #ff8fb8; }
+    .v-kawaii-a .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .v-kawaii-a .pills span { border-radius: 999px; padding: 4px 8px; font-size: 13px; }
+
+    /* Kawaii B — Diary, pushed cuter */
+    .v-kawaii-b {
+      position: relative;
+      background-color: #fff7f8;
+      background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 31px, #f3c9d4 32px);
+      background-position: 0 20px;
+      font-family: Gaegu, Fredoka, cursive;
+      color: #7a3b55;
+      padding: 18px 18px 100px 62px;
+      overflow: hidden;
+    }
+    .v-kawaii-b .holes {
+      position: absolute;
+      left: 8px;
+      top: 18px;
+      bottom: 18px;
+      width: 16px;
+      background: radial-gradient(circle, #fff 4px, #f0a8be 5px, transparent 6px);
+      background-size: 16px 32px;
+      background-repeat: repeat-y;
+    }
+    .v-kawaii-b::before {
+      content: "";
+      position: absolute;
+      left: 36px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #f3a8bc;
+    }
+    .v-kawaii-b .fold {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 42px 42px 0;
+      border-color: transparent #ffd0e0 #f7b7cb transparent;
+    }
+    .v-kawaii-b .vtoggle { position: relative; z-index: 1; }
+    .v-kawaii-b .vtoggle button {
+      color: #e48aaa;
+      background: transparent;
+      font-family: Fredoka, sans-serif;
+      font-size: 14px;
+    }
+    .v-kawaii-b .vtoggle button.on { color: #d43d73; }
+    .v-kawaii-b .washi {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      margin: 18px 0 0;
+      padding: 4px 14px 2px;
+      background: repeating-linear-gradient(90deg, #ffc2dc 0 10px, #fff6fb 10px 14px, #ffd6e8 14px 24px);
+      color: #9d3d55;
+      font-family: Fredoka, sans-serif;
+      font-size: 13px;
+      transform: rotate(-2deg);
+      box-shadow: 0 2px 0 rgba(255, 143, 184, 0.25);
+    }
+    .v-kawaii-b .dear { margin: 14px 0 0; font-size: 26px; }
+    .v-kawaii-b h2 { margin: 0 0 8px; font-size: 34px; line-height: 1.05; font-weight: 700; color: #d43d73; }
+    .v-kawaii-b li {
+      list-style: none;
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      padding: 6px 8px;
+      font-size: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .v-kawaii-b ul { margin: 0; padding: 0; }
+    .v-kawaii-b li.yes {
+      background: linear-gradient(transparent 42%, #ffd0e4 42% 78%, transparent 78%);
+    }
+    .v-kawaii-b .mark { width: 28px; color: #e44588; font-size: 26px; }
+    .v-kawaii-b li.no { color: #d7b4c0; font-size: 20px; }
+    .v-kawaii-b li em { margin-left: auto; font-style: normal; font-size: 18px; font-family: Fredoka, sans-serif; }
+    .v-kawaii-b .ps { margin: 18px 0 0; font-size: 22px; color: #c46b93; }
+    .v-kawaii-b .note { margin-top: 14px; padding-top: 4px; position: relative; z-index: 1; }
+    .v-kawaii-b .note .when { font-size: 22px; }
+    .v-kawaii-b .note.now .when { color: #d43d73; }
+
+    /* Kawaii C — Bento */
+    .v-kawaii-c {
+      background: #ffe8f1;
+      font-family: Fredoka, sans-serif;
+      color: #5a2348;
+      padding: 16px 14px 100px;
+    }
+    .v-kawaii-c .vtoggle button {
+      background: #fff;
+      border-radius: 14px;
+      padding: 6px 10px;
+      color: #d16b98;
+    }
+    .v-kawaii-c .vtoggle button.on { background: #5a2348; color: #fff; }
+    .v-kawaii-c .grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .v-kawaii-c .hero, .v-kawaii-c .tray { grid-column: 1 / -1; }
+    .v-kawaii-c .hero {
+      background: #fff;
+      border-radius: 28px;
+      padding: 18px 18px 16px;
+      min-height: 150px;
+    }
+    .v-kawaii-c .hero span {
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: #e45d84;
+    }
+    .v-kawaii-c .hero strong { display: block; font-size: 42px; line-height: 1; margin-top: 6px; }
+    .v-kawaii-c .hero em { font-style: normal; color: #a35d86; }
+    .v-kawaii-c .tile {
+      border-radius: 24px;
+      min-height: 120px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .v-kawaii-c .eyes { display: flex; gap: 6px; }
+    .v-kawaii-c .eyes i {
+      width: 10px;
+      height: 10px;
+      background: currentColor;
+      border-radius: 50%;
+      display: block;
+    }
+    .v-kawaii-c .tile b { font-size: 16px; }
+    .v-kawaii-c .tray {
+      background: #fff6fb;
+      border-radius: 22px;
+      padding: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .v-kawaii-c .tray span { font-size: 13px; margin-right: 4px; }
+    .v-kawaii-c .tray em {
+      font-style: normal;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 13px;
+    }
+    .v-kawaii-c .candy {
+      border-radius: 22px;
+      background: #fff;
+      padding: 12px;
+    }
+    .v-kawaii-c .candy.now { background: #fff; outline: 3px solid #ff8fb8; }
+    .v-kawaii-c .candy strong { display: block; margin-bottom: 6px; }
+    .v-kawaii-c .candy i {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 8px;
+      margin: 2px 4px 0 0;
+      font-style: normal;
+      font-size: 13px;
+    }
+
+    /* Edge A — Poster */
+    .v-edge-a {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: "Space Grotesk", sans-serif;
+      padding: 16px 16px 110px;
+      overflow: hidden;
+    }
+    .v-edge-a .vtoggle button {
+      border: 2px solid #fff;
+      color: #fff;
+      padding: 4px 8px;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      border-radius: 0;
+    }
+    .v-edge-a .vtoggle button.on { background: #ffe500; color: #111; border-color: #ffe500; }
+    .v-edge-a h2 {
+      margin: 18px 0 0;
+      font-family: "Archivo Black", sans-serif;
+      font-size: 92px;
+      line-height: 0.8;
+      letter-spacing: -0.04em;
+    }
+    .v-edge-a h2 span { display: block; }
+    .v-edge-a .band {
+      background: #ffe500;
+      color: #111;
+      margin: 16px -28px 18px;
+      padding: 8px 28px;
+      transform: rotate(-2.5deg);
+      font-family: "Archivo Black", sans-serif;
+      font-size: 16px;
+    }
+    .v-edge-a .block {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 3px solid #fff;
+      margin-top: 10px;
+      padding: 14px 12px;
+      box-shadow: 5px 5px 0 #ffe500;
+    }
+    .v-edge-a .block strong { font-family: "Archivo Black", sans-serif; font-size: 18px; text-transform: uppercase; }
+    .v-edge-a .block em { font-style: normal; font-family: "Archivo Black", sans-serif; letter-spacing: 0.08em; }
+    .v-edge-a .poster-week {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 2px solid #fff;
+      padding: 12px 0;
+      gap: 8px;
+    }
+    .v-edge-a .poster-week.now { background: #ffe500; color: #111; padding: 12px 8px; }
+
+    /* Edge B — Rail */
+    .v-edge-b {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      background: #090909;
+      color: #fff;
+      font-family: "Space Grotesk", sans-serif;
+      min-height: 100%;
+    }
+    .v-edge-b .spine {
+      background: #ffe500;
+      color: #111;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Archivo Black", sans-serif;
+      letter-spacing: 0.18em;
+      font-size: 13px;
+    }
+    .v-edge-b .tracks { padding: 16px 14px 100px 12px; overflow: auto; }
+    .v-edge-b .vtoggle button {
+      color: #a3a3a3;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11px;
+    }
+    .v-edge-b .vtoggle button.on { color: #ffe500; }
+    .v-edge-b .when { margin: 16px 0; font-size: 13px; color: #d4d4d4; }
+    .v-edge-b .track { position: relative; min-height: 54px; margin: 0 0 12px; }
+    .v-edge-b .bar {
+      min-height: 54px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      gap: 8px;
+    }
+    .v-edge-b .track.stop { display: flex; align-items: center; gap: 10px; }
+    .v-edge-b .track.stop .bar { width: 22% !important; min-height: 54px; padding: 0; }
+    .v-edge-b .aside {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: #a3a3a3;
+      font-family: "Archivo Black", sans-serif;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .v-edge-b .bar span, .v-edge-b .bar strong {
+      font-family: "Archivo Black", sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+    }
+    .v-edge-b .bar strong { font-size: 12px; letter-spacing: 0.06em; }
+
+    /* Edge C — Zine */
+    .v-edge-c {
+      background: #fff;
+      color: #111;
+      font-family: "Space Grotesk", sans-serif;
+      padding: 10px;
+      height: 100%;
+    }
+    .v-edge-c .frame {
+      border: 8px solid #111;
+      min-height: calc(100% - 0px);
+      padding: 14px 14px 100px;
+      position: relative;
+    }
+    .v-edge-c .vtoggle button {
+      border: 2px solid #111;
+      padding: 3px 8px;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      border-radius: 0;
+      background: #fff;
+    }
+    .v-edge-c .vtoggle button.on { background: #111; color: #fff; }
+    .v-edge-c .seal {
+      position: absolute;
+      top: 52px;
+      right: 14px;
+      width: 86px;
+      height: 86px;
+      border: 3px solid #e11d48;
+      border-radius: 50%;
+      color: #e11d48;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(12deg);
+      font-family: "Archivo Black", sans-serif;
+      background: #fff;
+    }
+    .v-edge-c .seal span { font-size: 11px; letter-spacing: 0.12em; }
+    .v-edge-c .seal strong { font-size: 28px; line-height: 1; }
+    .v-edge-c h2 {
+      margin: 70px 100px 12px 0;
+      font-family: "Archivo Black", sans-serif;
+      font-size: 42px;
+      line-height: 0.9;
+      text-transform: uppercase;
+    }
+    .v-edge-c .stamp {
+      border: 3px solid #111;
+      box-shadow: inset 0 0 0 2px #111;
+      padding: 12px;
+      margin: 10px 8px;
+    }
+    .v-edge-c .stamp small {
+      display: block;
+      letter-spacing: 0.2em;
+      font-family: "Archivo Black", sans-serif;
+    }
+    .v-edge-c .stamp strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 22px;
+      text-transform: uppercase;
+      font-family: "Archivo Black", sans-serif;
+    }
+    .v-edge-c .stamp.skip { color: #a3a3a3; box-shadow: inset 0 0 0 2px currentColor; }
+    .v-edge-c .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+    .v-edge-c .mini {
+      border: 3px solid #111;
+      padding: 8px;
+      min-height: 84px;
+    }
+    .v-edge-c .mini.now { background: #111; color: #ffe500; }
+    .v-edge-c .mini strong { display: block; font-family: "Archivo Black", sans-serif; font-size: 14px; }
+    .v-edge-c .mini span { display: block; margin-top: 6px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div class="chrome">
+    <p id="state"></p>
+    <div class="switcher">
+      <button type="button" id="prev" aria-label="Previous variant">←</button>
+      <div class="switcher-label" id="switcher-label"></div>
+      <button type="button" id="next" aria-label="Next variant">→</button>
+    </div>
+  </div>
+  <script>
+    // Mirrors the schedule math in index.html and reads the same saved config.
+    const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const PALETTE = {
+      green: { solid: '#22c55e', bg: '#d1fae5', ink: '#065f46' },
+      red: { solid: '#ef4444', bg: '#fee2e2', ink: '#991b1b' },
+      yellow: { solid: '#eab308', bg: '#fef9c3', ink: '#854d0e' },
+      blue: { solid: '#3b82f6', bg: '#dbeafe', ink: '#1e3a8a' },
+      black: { solid: '#111827', bg: '#e5e7eb', ink: '#111827' },
+      brown: { solid: '#a16207', bg: '#f5e6d3', ink: '#78350f' },
+      grey: { solid: '#6b7280', bg: '#f3f4f6', ink: '#374151' },
+      pink: { solid: '#ec4899', bg: '#fce7f3', ink: '#9d174d' },
+      purple: { solid: '#8b5cf6', bg: '#ede9fe', ink: '#5b21b6' },
+      orange: { solid: '#f97316', bg: '#ffedd5', ink: '#9a3412' },
+      default: { solid: '#64748b', bg: '#e2e8f0', ink: '#334155' }
+    };
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function colorClass(name) {
+      const lower = String(name || '').toLowerCase();
+      const map = [
+        ['green', 'green'], ['red', 'red'], ['yellow', 'yellow'], ['blue', 'blue'],
+        ['black', 'black'], ['brown', 'brown'], ['grey', 'grey'], ['gray', 'grey'],
+        ['pink', 'pink'], ['purple', 'purple'], ['orange', 'orange']
+      ];
+      for (const [key, value] of map) if (lower.includes(key)) return value;
+      return 'default';
+    }
+    function tickColor(bin) {
+      return bin.color === 'black' ? '#e7e5e4' : bin.pal.solid;
+    }
+    function inkOn(bin) {
+      if (bin.color === 'yellow' || bin.color === 'black' || bin.color === 'grey') return '#111';
+      return '#fff';
+    }
+    function defaultConfig() {
+      return {
+        scheduleStartDate: '2026-01-05',
+        collectionDayOfWeek: 2,
+        cycleLength: 2,
+        bins: [
+          { name: 'Green Bin', weeksInCycle: [0, 1] },
+          { name: 'Red Bin', weeksInCycle: [0] },
+          { name: 'Yellow Bin', weeksInCycle: [1] }
+        ]
+      };
+    }
+    function loadConfig() {
+      try {
+        const raw = localStorage.getItem('binday-config');
+        if (!raw) return defaultConfig();
+        const parsed = JSON.parse(raw);
+        const config = { ...defaultConfig(), ...parsed };
+        if (!Array.isArray(config.bins) || config.bins.length === 0) config.bins = defaultConfig().bins;
+        config.cycleLength = Math.max(1, Math.min(52, parseInt(config.cycleLength, 10) || 2));
+        config.collectionDayOfWeek = Math.max(0, Math.min(6, parseInt(config.collectionDayOfWeek, 10)));
+        config.bins = config.bins.map((b) => ({
+          name: b.name || 'Bin',
+          weeksInCycle: (Array.isArray(b.weeksInCycle) ? b.weeksInCycle : [0])
+            .map((n) => Math.max(0, parseInt(n, 10) || 0))
+            .filter((w) => w < config.cycleLength)
+        }));
+        config.bins.forEach((b) => { if (b.weeksInCycle.length === 0) b.weeksInCycle = [0]; });
+        return config;
+      } catch (_) {
+        return defaultConfig();
+      }
+    }
+    function getNextBinDay(config) {
+      const today = new Date();
+      const daysUntil = (config.collectionDayOfWeek - today.getDay() + 7) % 7 || 7;
+      const next = new Date(today);
+      next.setDate(today.getDate() + daysUntil);
+      next.setHours(0, 0, 0, 0);
+      return next;
+    }
+    function getWeekStart(date) {
+      const d = new Date(date);
+      const day = d.getDay();
+      const diff = day === 0 ? -6 : 1 - day;
+      const monday = new Date(d);
+      monday.setDate(d.getDate() + diff);
+      monday.setHours(0, 0, 0, 0);
+      return monday;
+    }
+    function getCollectionDayInWeek(config, date) {
+      const weekStart = getWeekStart(date);
+      const collectionDate = new Date(weekStart);
+      const daysToAdd = config.collectionDayOfWeek === 0 ? 6 : config.collectionDayOfWeek - 1;
+      collectionDate.setDate(weekStart.getDate() + daysToAdd);
+      collectionDate.setHours(0, 0, 0, 0);
+      return collectionDate;
+    }
+    function getBinsForWeek(config, weekStart) {
+      const start = new Date(config.scheduleStartDate + 'T00:00:00');
+      const weeksDiff = Math.floor((weekStart.getTime() - start.getTime()) / (7 * 24 * 60 * 60 * 1000));
+      const cycleIndex = ((weeksDiff % config.cycleLength) + config.cycleLength) % config.cycleLength;
+      return config.bins.map((bin) => (bin.weeksInCycle || []).some((w) => w === cycleIndex));
+    }
+    function decorate(bin, active) {
+      const color = colorClass(bin.name);
+      return { name: bin.name, active, color, pal: PALETTE[color] || PALETTE.default };
+    }
+    function buildData() {
+      const config = loadConfig();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const next = getNextBinDay(config);
+      const thisCollection = getCollectionDayInWeek(config, today);
+      const currentWeekStart = today > thisCollection ? getWeekStart(next) : getWeekStart(today);
+      const flags = getBinsForWeek(config, currentWeekStart);
+      const bins = config.bins.map((bin, i) => decorate(bin, flags[i]));
+      const weeks = [];
+      for (let i = 0; i < 8; i++) {
+        const weekStart = new Date(currentWeekStart);
+        weekStart.setDate(weekStart.getDate() + i * 7);
+        const weekFlags = getBinsForWeek(config, weekStart);
+        const collection = getCollectionDayInWeek(config, weekStart);
+        weeks.push({
+          isCurrent: weekStart.getTime() === currentWeekStart.getTime(),
+          collectionLabel: collection.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          bins: config.bins.map((bin, idx) => decorate(bin, weekFlags[idx])).filter((b) => b.active)
+        });
+      }
+      return {
+        dayName: DAY_NAMES[config.collectionDayOfWeek],
+        dayNum: String(next.getDate()),
+        month: next.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+        monthLong: next.toLocaleDateString('en-US', { month: 'long' }),
+        full: next.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
+        bins,
+        weeks,
+        activeBins: bins.filter((b) => b.active),
+        inactiveBins: bins.filter((b) => !b.active)
+      };
+    }
+
+    function toggle(view) {
+      return `<div class="vtoggle">
+        <button type="button" data-view="week" class="${view === 'week' ? 'on' : ''}">This week</button>
+        <button type="button" data-view="calendar" class="${view === 'calendar' ? 'on' : ''}">Calendar</button>
+      </div>`;
+    }
+
+    const variants = [
+      {
+        id: 'sleek-void',
+        group: 'Dramatic, sleek, minimalist',
+        letter: 'A',
+        name: 'Void',
+        blurb: 'One huge date. Bins are quiet rows, not cards.',
+        render(data, view) {
+          const body = view === 'week'
+            ? `<div class="date"><div class="num">${esc(data.dayNum)}</div><div class="meta"><b>${esc(data.month)}</b><span>${esc(data.dayName)}</span></div></div>
+               <p class="lead">Put these out.</p>
+               ${data.bins.map((b) => `<div class="row ${b.active ? '' : 'off'}"><i class="tick" style="background:${tickColor(b)}"></i><strong>${esc(b.name)}</strong><em>${b.active ? 'OUT' : '—'}</em></div>`).join('')}`
+            : `<p class="lead" style="margin-top:36px">Next eight collections.</p>
+               ${data.weeks.map((w) => `<div class="weekline ${w.isCurrent ? 'now' : ''}"><span>${esc(w.collectionLabel)}</span><div class="dots">${w.bins.map((b) => `<i style="background:${tickColor(b)}" title="${esc(b.name)}"></i>`).join('') || '—'}</div></div>`).join('')}`;
+          return `<div class="v-sleek-a">${toggle(view)}${body}</div>`;
+        }
+      },
+      {
+        id: 'sleek-ledger',
+        group: 'Dramatic, sleek, minimalist',
+        letter: 'B',
+        name: 'Ledger',
+        blurb: 'A printed program. Hairline rules, a square of color, no cards.',
+        render(data, view) {
+          const body = view === 'week'
+            ? `${data.bins.map((b, i) => `<div class="entry ${b.active ? '' : 'off'}"><span class="n">${String(i + 1).padStart(2, '0')}</span><i class="sw" style="background:${tickColor(b)}"></i><strong>${esc(b.name)}</strong><em>${b.active ? 'Out' : 'Stays in'}</em></div>`).join('')}`
+            : data.weeks.map((w) => `<div class="weekhead ${w.isCurrent ? 'now' : ''}">${esc(w.collectionLabel)}</div><div class="entry"><span class="n"></span><i class="sw" style="background:transparent"></i><strong>${w.bins.map((b) => esc(b.name)).join(', ') || 'Nothing'}</strong><em>${w.isCurrent ? 'Next' : ''}</em></div>`).join('');
+          return `<div class="v-sleek-b">${toggle(view)}<header><div><p class="k">Collection</p><p class="big">${esc(data.dayName)}</p></div><div><p class="k">Date</p><p class="big">${esc(data.dayNum)} ${esc(data.monthLong)}</p></div></header>${body}</div>`;
+        }
+      },
+      {
+        id: 'sleek-split',
+        group: 'Dramatic, sleek, minimalist',
+        letter: 'C',
+        name: 'Split',
+        blurb: 'The date crowds the edge. Bins that go out take the whole frame.',
+        render(data, view) {
+          const pane = view === 'week'
+            ? data.bins.map((b) => `<div class="slab ${b.active ? '' : 'off'}" style="--tick:${tickColor(b)};background:${b.active ? b.pal.solid : ''};color:${b.active ? inkOn(b) : ''}"><strong>${esc(b.name)}</strong><em>${b.active ? 'OUT' : 'HOME'}</em></div>`).join('')
+            : data.weeks.map((w) => `<div class="strip ${w.isCurrent ? 'now' : ''}"><span>${esc(w.collectionLabel)}</span><span class="pips">${w.bins.map((b) => `<i style="background:${w.isCurrent ? tickColor(b) : tickColor(b)}"></i>`).join('')}</span></div>`).join('');
+          return `<div class="v-sleek-c"><aside>${toggle(view)}<p class="month">${esc(data.month)}</p><p class="num">${esc(data.dayNum)}</p><p class="day">${esc(data.dayName)}</p><p class="hint">${view === 'week' ? 'Put out' : 'Ahead'}</p></aside><div class="pane">${pane}</div></div>`;
+        }
+      },
+      {
+        id: 'kawaii-stickers',
+        group: 'Cute, fun, kawaii',
+        letter: 'A',
+        name: 'Stickers',
+        blurb: 'Blush, sparkles, and stickers you could peel off.',
+        render(data, view) {
+          const rots = [-8, 7, -4, 6];
+          const sticker = (b, nap, i) => `<div class="sticker ${nap ? 'asleep' : ''}" style="background:${b.pal.bg};color:${b.pal.ink};transform:rotate(${nap ? -6 : rots[i % 4]}deg)"><span class="spark">${nap ? 'zzz' : '✦'}</span><div class="face"><i></i><i></i></div><div class="blush"><b></b><b></b></div><div class="smile"></div><strong>${esc(b.name)}</strong><small>${b.active ? 'out!!' : 'napping'}</small></div>`;
+          const floats = '<span class="float a">♡</span><span class="float b">✦</span><span class="float c">♡</span>';
+          const body = view === 'week'
+            ? `<div class="hello"><img src="icons/icon-512.png" alt=""><div class="bubble"><strong>hiii~</strong><span>${esc(data.dayName)} morning ♡</span></div></div>
+               <h3>peel these out ♡</h3><div class="stickers">${data.activeBins.map((b, i) => sticker(b, false, i)).join('') || '<p>everybody stays home</p>'}</div>
+               ${data.inactiveBins.length ? `<h3>shhh, napping</h3><div class="stickers">${data.inactiveBins.map((b, i) => sticker(b, true, i)).join('')}</div>` : ''}`
+            : `<div class="hello"><img src="icons/icon-512.png" alt=""><div class="bubble"><strong>plan ahead~</strong><span>eight cute weeks</span></div></div>
+               ${data.weeks.map((w) => `<div class="cluster ${w.isCurrent ? 'now' : ''}"><b>${esc(w.collectionLabel)}${w.isCurrent ? ' · next!' : ''}</b><div class="pills">${w.bins.map((b) => `<span style="background:${b.pal.bg};color:${b.pal.ink}">${esc(b.name)}</span>`).join('')}</div></div>`).join('')}`;
+          return `<div class="v-kawaii-a">${floats}${toggle(view)}${body}</div>`;
+        }
+      },
+      {
+        id: 'kawaii-diary',
+        group: 'Cute, fun, kawaii',
+        letter: 'B',
+        name: 'Diary',
+        blurb: 'A pink diary page with washi tape and highlighter hearts.',
+        render(data, view) {
+          const body = view === 'week'
+            ? `<div class="washi">today's page ♡</div><p class="dear">dear me,</p><h2>bins on ${esc(data.full)} ♡</h2><ul>${data.bins.map((b) => `<li class="${b.active ? 'yes' : 'no'}"><span class="mark">${b.active ? '♥' : '○'}</span><span>${esc(b.name)}</span><em>${b.active ? 'out!' : 'zzz'}</em></li>`).join('')}</ul>${data.inactiveBins.length ? '<p class="ps">p.s. the quiet one can sleep in~</p>' : ''}`
+            : data.weeks.map((w) => `<div class="note ${w.isCurrent ? 'now' : ''}"><div class="when">${w.isCurrent ? '♡ ' : ''}${esc(w.collectionLabel)}${w.isCurrent ? ' · next' : ''}</div><ul>${w.bins.map((b) => `<li class="yes"><span class="mark">♥</span><span>${esc(b.name)}</span></li>`).join('')}</ul></div>`).join('');
+          return `<div class="v-kawaii-b"><div class="holes"></div><div class="fold"></div>${toggle(view)}${body}</div>`;
+        }
+      },
+      {
+        id: 'kawaii-bento',
+        group: 'Cute, fun, kawaii',
+        letter: 'C',
+        name: 'Bento',
+        blurb: 'One giant “out” tile. Sleeping bins sit in a little tray.',
+        render(data, view) {
+          const body = view === 'week'
+            ? `<div class="grid"><div class="hero"><span>out</span><strong>${esc(data.dayName)}</strong><em>${esc(data.dayNum)} ${esc(data.monthLong)}</em></div>
+               ${data.activeBins.map((b) => `<div class="tile" style="background:${b.pal.bg};color:${b.pal.ink}"><span class="eyes"><i></i><i></i></span><b>${esc(b.name)}</b></div>`).join('')}
+               ${data.inactiveBins.length ? `<div class="tray"><span>napping</span>${data.inactiveBins.map((b) => `<em style="background:${b.pal.bg};color:${b.pal.ink}">${esc(b.name)}</em>`).join('')}</div>` : ''}</div>`
+            : `<div class="grid">${data.weeks.map((w) => `<div class="candy ${w.isCurrent ? 'now' : ''}"><strong>${esc(w.collectionLabel)}</strong>${w.bins.map((b) => `<i style="background:${b.pal.bg};color:${b.pal.ink}">${esc(b.name)}</i>`).join('')}</div>`).join('')}</div>`;
+          return `<div class="v-kawaii-c">${toggle(view)}${body}</div>`;
+        }
+      },
+      {
+        id: 'edge-poster',
+        group: 'Sharp, edgy, outgoing',
+        letter: 'A',
+        name: 'Poster',
+        blurb: 'Type runs off the page. Each bin is a stamped block.',
+        render(data, view) {
+          const body = view === 'week'
+            ? `<h2><span>BIN</span><span>DAY</span></h2><div class="band">${esc(data.full)}</div>${data.bins.map((b) => `<div class="block" style="background:${b.active ? (b.color === 'black' ? '#f5f5f4' : b.pal.solid) : '#111'};color:${b.active ? inkOn(b) : '#737373'}"><strong>${esc(b.name)}</strong><em>${b.active ? 'OUT' : 'SKIP'}</em></div>`).join('')}`
+            : `<h2><span>NEXT</span><span>UP</span></h2>${data.weeks.map((w) => `<div class="poster-week ${w.isCurrent ? 'now' : ''}"><strong>${esc(w.collectionLabel)}</strong><span>${w.bins.map((b) => esc(b.name)).join(' / ')}</span></div>`).join('')}`;
+          return `<div class="v-edge-a">${toggle(view)}${body}</div>`;
+        }
+      },
+      {
+        id: 'edge-rail',
+        group: 'Sharp, edgy, outgoing',
+        letter: 'B',
+        name: 'Rail',
+        blurb: 'A transit map. This week is the longest, loudest bar.',
+        render(data, view) {
+          const tracks = view === 'week'
+            ? `<p class="when">${esc(data.full)}</p>${data.bins.map((b) => b.active
+              ? `<div class="track"><div class="bar" style="width:100%;background:${b.color === 'black' ? '#f5f5f4' : b.pal.solid};color:${inkOn(b)}"><span>${esc(b.name)}</span><strong>OUT</strong></div></div>`
+              : `<div class="track stop"><div class="bar" style="background:${b.pal.solid}"></div><div class="aside"><span>${esc(b.name)}</span><strong>SKIP</strong></div></div>`).join('')}`
+            : data.weeks.map((w) => `<div class="track"><div class="bar" style="width:${w.isCurrent ? '100%' : '68%'};background:${w.isCurrent ? '#ffe500' : '#1f1f1f'};color:${w.isCurrent ? '#111' : '#fff'}"><span>${esc(w.collectionLabel)}</span><strong>${w.bins.map((b) => esc(b.name.replace(/\s*bin/i, ''))).join(' · ')}</strong></div></div>`).join('');
+          return `<div class="v-edge-b"><div class="spine">COLLECTION</div><div class="tracks">${toggle(view)}${tracks}</div></div>`;
+        }
+      },
+      {
+        id: 'edge-zine',
+        group: 'Sharp, edgy, outgoing',
+        letter: 'C',
+        name: 'Zine',
+        blurb: 'A heavy black frame. Each bin is a rubber stamp.',
+        render(data, view) {
+          const rots = [-3, 2.5, -1.5, 3];
+          const body = view === 'week'
+            ? `<div class="seal"><span>${esc(data.month)}</span><strong>${esc(data.dayNum)}</strong></div><h2>${esc(data.dayName)}<br>out</h2>${data.bins.map((b, i) => `<div class="stamp ${b.active ? '' : 'skip'}" style="transform:rotate(${rots[i % 4]}deg);border-color:${b.active ? '#111' : '#d4d4d4'}"><small>${b.active ? 'OUT' : 'SKIP'}</small><strong>${esc(b.name)}</strong></div>`).join('')}`
+            : `<h2 style="margin-top:18px">Weeks</h2><div class="grid2">${data.weeks.map((w) => `<div class="mini ${w.isCurrent ? 'now' : ''}"><strong>${esc(w.collectionLabel)}</strong><span>${w.bins.map((b) => esc(b.name)).join(', ')}</span></div>`).join('')}</div>`;
+          return `<div class="v-edge-c"><div class="frame">${toggle(view)}${body}</div></div>`;
+        }
+      }
+    ];
+
+    const cycle = ['finalists', 'sleek-split', 'kawaii-stickers', 'kawaii-diary', 'edge-poster'];
+    const order = ['board', 'finalists', ...variants.map((v) => v.id)];
+
+    function read() {
+      const q = new URLSearchParams(location.search);
+      const asked = q.get('variant');
+      const variant = order.includes(asked) ? asked : 'finalists';
+      const view = q.get('view') === 'calendar' ? 'calendar' : 'week';
+      return { variant, view };
+    }
+    function writeUrl(variant, view, push) {
+      const q = new URLSearchParams();
+      q.set('variant', variant);
+      const comparing = variant === 'board' || variant === 'finalists';
+      if (!comparing && view === 'calendar') q.set('view', 'calendar');
+      const url = '?' + q.toString();
+      if (push) history.pushState(null, '', url);
+      else history.replaceState(null, '', url);
+    }
+    function step(dir) {
+      const { variant, view } = read();
+      const i = Math.max(0, cycle.indexOf(variant));
+      const next = cycle[(i + dir + cycle.length) % cycle.length];
+      writeUrl(next, view, false);
+      render();
+    }
+    function boardHtml(data) {
+      const groups = [];
+      variants.forEach((v) => {
+        let g = groups.find((item) => item.title === v.group);
+        if (!g) { g = { title: v.group, items: [] }; groups.push(g); }
+        g.items.push(v);
+      });
+      return `<div class="board"><header class="board-head"><p class="eyebrow">Throwaway prototype</p><h1>Nine ways Bin Day could look</h1><p>Three layouts in each direction. Open a phone to try this week and the calendar, then use the arrows. Nothing here changes the real app until you pick.</p></header>
+        ${groups.map((g) => `<section class="group"><h2>${esc(g.title)}</h2><div class="group-row">${g.items.map((v) => phoneCard(v, data)).join('')}</div></section>`).join('')}
+      </div>`;
+    }
+    function phoneCard(v, data, title) {
+      return `<a class="opt" href="?variant=${v.id}"><div class="phone"><div class="stage">${v.render(data, 'week')}</div></div><div class="opt-name">${esc(title || (v.letter + ' · ' + v.name))}</div><p>${esc(v.blurb)}</p></a>`;
+    }
+    function finalistsHtml(data) {
+      const picks = [
+        ['sleek-split', 'Dramatic C'],
+        ['kawaii-stickers', 'Cute A'],
+        ['kawaii-diary', 'Cute B'],
+        ['edge-poster', 'Sharp A']
+      ];
+      return `<div class="board shortlist"><header class="board-head"><p class="eyebrow">Shortlist</p><h1>Four to weigh</h1><p>Dramatic C is louder, and Cute A and B are sweeter. Sharp A is unchanged. Open a phone for the calendar. <a href="?variant=board">The other five</a> are still here.</p></header>
+        <div class="final-row">${picks.map(([id, title]) => phoneCard(variants.find((v) => v.id === id), data, title)).join('')}</div>
+      </div>`;
+    }
+    function render() {
+      const { variant, view } = read();
+      const data = buildData();
+      const app = document.getElementById('app');
+      const comparing = variant === 'board' || variant === 'finalists';
+      if (variant === 'board') {
+        document.body.className = 'mode-board';
+        app.innerHTML = boardHtml(data);
+        document.getElementById('switcher-label').innerHTML = '<strong>All nine</strong><span>arrows stay on the shortlist</span>';
+      } else if (variant === 'finalists') {
+        document.body.className = 'mode-board';
+        app.innerHTML = finalistsHtml(data);
+        document.getElementById('switcher-label').innerHTML = '<strong>Four side by side</strong><span>Dramatic C · Cute A · Cute B · Sharp A</span>';
+      } else {
+        const v = variants.find((item) => item.id === variant);
+        document.body.className = 'mode-full';
+        app.innerHTML = `<div class="screen">${v.render(data, view)}</div>`;
+        const idx = cycle.indexOf(variant);
+        const place = idx > 0 ? `${idx} / 4 · ` : '';
+        document.getElementById('switcher-label').innerHTML = `<strong>${esc(v.letter)} · ${esc(v.name)}</strong><span>${place}${esc(v.group)}</span>`;
+      }
+      const out = data.activeBins.map((b) => b.name).join(', ') || 'none';
+      const home = data.inactiveBins.map((b) => b.name).join(', ') || 'none';
+      const state = document.getElementById('state');
+      state.textContent = `${view === 'calendar' && !comparing ? 'Calendar' : 'This week'} · out: ${out} · home: ${home}`;
+    }
+
+    document.getElementById('prev').addEventListener('click', () => step(-1));
+    document.getElementById('next').addEventListener('click', () => step(1));
+    document.body.addEventListener('click', (event) => {
+      const btn = event.target.closest('[data-view]');
+      if (!btn) return;
+      const { variant } = read();
+      if (variant === 'board' || variant === 'finalists') return;
+      writeUrl(variant, btn.dataset.view, false);
+      render();
+    });
+    window.addEventListener('popstate', render);
+    window.addEventListener('keydown', (event) => {
+      const t = event.target;
+      if (t && (t.matches('input, textarea, select') || t.isContentEditable)) return;
+      if (event.key === 'ArrowLeft') { event.preventDefault(); step(-1); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); step(1); }
+    });
+    if (!location.search) writeUrl('finalists', 'week', true);
+    render();
+  </script>
+</body>
+</html>
